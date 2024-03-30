@@ -1,0 +1,9 @@
+{
+	"name": "Poetics SDK Go",
+	"image": "mcr.microsoft.com/devcontainers/base",
+	"workspaceFolder": "/workspace",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+	"features": {
+		"ghcr.io/devcontainers/features/go:1": {}
+	}
+}
