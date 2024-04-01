@@ -1,0 +1,545 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Poetics Speech REST API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://rest.api.poetics-ai.com/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health API"
+    },
+    {
+      "name": "Conversation API"
+    },
+    {
+      "name": "Job API"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "order": {
+        "type": "string",
+        "enum": [
+          "asc",
+          "desc"
+        ]
+      },
+      "blank": {
+        "type": "object",
+        "example": {}
+      },
+      "conversation": {
+        "type": "object",
+        "required": [
+          "id",
+          "organization_id",
+          "title",
+          "started_at",
+          "ended_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-0000-0000-000000000001"
+          },
+          "organization_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-0000-0000-000000000001"
+          },
+          "title": {
+            "type": "string",
+            "example": "Test Name"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00+09:00"
+          },
+          "ended_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00+09:00",
+            "nullable": true
+          }
+        }
+      },
+      "conversation_detail": {
+        "type": "object",
+        "required": [
+          "id",
+          "organization_id",
+          "title",
+          "started_at",
+          "ended_at",
+          "participants",
+          "utterances"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-0000-0000-000000000001"
+          },
+          "organization_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-0000-0000-000000000001"
+          },
+          "title": {
+            "type": "string",
+            "example": "Test Name"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00+09:00"
+          },
+          "ended_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00+09:00",
+            "nullable": true
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/participant"
+            }
+          },
+          "utterances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/utterance"
+            }
+          }
+        }
+      },
+      "participant": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-0000-0000-000000000001"
+          },
+          "name": {
+            "type": "string",
+            "example": "Test Name"
+          }
+        }
+      },
+      "utterance": {
+        "type": "object",
+        "required": [
+          "id",
+          "participant_id",
+          "text",
+          "start_at",
+          "end_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-0000-0000-000000000001"
+          },
+          "participant_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-0000-0000-000000000001"
+          },
+          "text": {
+            "type": "string",
+            "example": "こんにちは"
+          },
+          "start_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00+09:00"
+          },
+          "end_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00+09:00"
+          }
+        }
+      },
+      "stream_asr_job": {
+        "type": "object",
+        "required": [
+          "id",
+          "organization_id",
+          "conversation_id",
+          "api_key_id",
+          "status",
+          "audio_encoding",
+          "audio_sample_rate",
+          "created_at",
+          "closed_at",
+          "completed_at",
+          "failed_at",
+          "cumulative_audio_duration",
+          "cumulative_voice_duration"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-0000-0000-000000000001"
+          },
+          "organization_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-0000-0000-000000000001"
+          },
+          "conversation_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-0000-0000-000000000001"
+          },
+          "api_key_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-0000-0000-000000000001"
+          },
+          "status": {
+            "$ref": "#/components/schemas/stream_asr_job_status"
+          },
+          "audio_encoding": {
+            "$ref": "#/components/schemas/audio_encoding"
+          },
+          "audio_sample_rate": {
+            "type": "integer",
+            "example": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00+09:00"
+          },
+          "closed_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00+09:00",
+            "nullable": true
+          },
+          "completed_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00+09:00",
+            "nullable": true
+          },
+          "failed_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00+09:00",
+            "nullable": true
+          },
+          "cumulative_audio_duration": {
+            "type": "integer",
+            "example": 1
+          },
+          "cumulative_voice_duration": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "stream_asr_job_status": {
+        "type": "string",
+        "enum": [
+          "open",
+          "closed",
+          "completed",
+          "failed"
+        ]
+      },
+      "audio_encoding": {
+        "type": "string",
+        "enum": [
+          "open",
+          "closed",
+          "completed",
+          "failed"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health API"
+        ],
+        "summary": "サービスのヘルスチェックを行う",
+        "operationId": "GetHealth",
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/blank"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations": {
+      "get": {
+        "tags": [
+          "Conversation API"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "会話の一覧を取得する",
+        "operationId": "GetConversations",
+        "parameters": [
+          {
+            "name": "min_started_at",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2023-01-01T00:00:00+09:00"
+            }
+          },
+          {
+            "name": "max_started_at",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2023-01-01T00:00:00+09:00"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "default": 0
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/order"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/conversation"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations/{conversation_id}": {
+      "get": {
+        "tags": [
+          "Conversation API"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "会話の詳細を取得する",
+        "operationId": "GetConversationDetail",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "00000000-0000-0000-0000-000000000001"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/conversation_detail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stream_asr_jobs": {
+      "get": {
+        "tags": [
+          "Job API"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "ストリームASRジョブの一覧を取得する",
+        "operationId": "GetStreamAsrJobs",
+        "parameters": [
+          {
+            "name": "min_created_at",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2023-01-01T00:00:00+09:00"
+            }
+          },
+          {
+            "name": "max_created_at",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2023-01-01T00:00:00+09:00"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/order"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/stream_asr_job"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stream_asr_jobs/{stream_asr_job_id}": {
+      "get": {
+        "tags": [
+          "Job API"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "ストリームASRジョブを取得する",
+        "operationId": "GetStreamAsrJob",
+        "parameters": [
+          {
+            "name": "stream_asr_job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "00000000-0000-0000-0000-000000000001"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_asr_job"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-readme": {
+    "explorer-enabled": true,
+    "proxy-enabled": true,
+    "samples-enabled": true
+  }
+}
