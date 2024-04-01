@@ -4,7 +4,7 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 )
 
-func NewRestClientWithResponses(apiKey string) (*ClientWithResponses, error) {
+func NewRestClient(apiKey string) (*ClientWithResponses, error) {
 	apiKeyProvider, err := securityprovider.NewSecurityProviderApiKey("header", "X-API-Key", apiKey)
 	if err != nil {
 		return nil, err

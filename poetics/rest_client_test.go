@@ -12,7 +12,7 @@ func TestNewRestClientWithResponses(t *testing.T) {
 
 	ctx := context.Background()
 
-	client, err := NewRestClientWithResponses(apiKey)
+	client, err := NewRestClient(apiKey)
 	if err != nil {
 		t.Fatalf("Error creating client: %v\n", err)
 	}
@@ -24,7 +24,7 @@ func TestNewRestClientWithResponses(t *testing.T) {
 	}
 
 	// conversations with invalid api key
-	invalidClient, err := NewRestClientWithResponses("invalid")
+	invalidClient, err := NewRestClient("invalid")
 	if err != nil {
 		t.Fatalf("Error creating client: %v\n", err)
 	}
