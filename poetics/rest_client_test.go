@@ -19,24 +19,32 @@ func TestNewRestClientWithResponses(t *testing.T) {
 
 	// health
 	healthResponse, err := client.GetHealthWithResponse(ctx)
-	if err != nil {
-		t.Fatalf("Error getting health: %v\n", err)
-	}
-	if healthResponse.StatusCode() != 200 {
-		t.Fatalf("Error getting health: %v\n", healthResponse.Status())
+	if err != nil || healthResponse.StatusCode() != 200 {
+		t.Fatalf("Error getting health: %v, %v\n", err, healthResponse.Status())
 	}
 
-	// conversations
-	conversationsResponse, err := client.GetConversationsWithResponse(ctx, &GetConversationsParams{
+	// conversations with invalid api key
+	invalidClient, err := NewRestClientWithResponses("invalid")
+	if err != nil {
+		t.Fatalf("Error creating client: %v\n", err)
+	}
+	conversationsResponse, err := invalidClient.GetConversationsWithResponse(ctx, &GetConversationsParams{
 		Limit:  10,
 		Offset: 0,
 		Order:  "desc",
 	})
-	if err != nil {
-		t.Fatalf("Error getting conversatins: %v\n", err)
+	if err == nil && conversationsResponse.StatusCode() == 200 {
+		t.Fatalf("Expected error getting conversations with invalid api key\n")
 	}
-	if conversationsResponse.StatusCode() != 200 {
-		t.Fatalf("Error getting conversations: %v\n", conversationsResponse.Status())
+
+	// conversations
+	conversationsResponse, err = client.GetConversationsWithResponse(ctx, &GetConversationsParams{
+		Limit:  10,
+		Offset: 0,
+		Order:  "desc",
+	})
+	if err != nil || conversationsResponse.StatusCode() != 200 {
+		t.Fatalf("Error getting conversatins: %v, %v\n", err, conversationsResponse.Status())
 	}
 
 	// stream_asr_jobs
@@ -45,11 +53,8 @@ func TestNewRestClientWithResponses(t *testing.T) {
 		Offset: 0,
 		Order:  "asc",
 	})
-	if err != nil {
-		t.Fatalf("Error getting stream_asr_jobs: %v\n", err)
-	}
-	if jobsResponse.StatusCode() != 200 {
-		t.Fatalf("Error getting stream_asr_jobs: %v\n", jobsResponse.Status())
+	if err != nil || jobsResponse.StatusCode() != 200 {
+		t.Fatalf("Error getting stream_asr_jobs: %v, %v\n", err, jobsResponse.Status())
 	}
 
 }
