@@ -2,7 +2,7 @@ test:
 ifndef POETICS_API_KEY
 	$(error POETICS_API_KEY is not set)
 endif
-	go test -v ./...
+	go test -count=1 -v ./...
 
 codegen:
 	oapi-codegen --generate client,types --package poetics rest.spec.json  > poetics/rest_client.gen.go
