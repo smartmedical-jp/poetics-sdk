@@ -15,8 +15,8 @@ type AudioBuffer struct {
 }
 
 // オーディオバッファを初期化する
-func NewAudioBuffer() *AudioBuffer {
-	return &AudioBuffer{
+func NewAudioBuffer() AudioBuffer {
+	return AudioBuffer{
 		bytesPerFragment: 16000,
 	}
 }
