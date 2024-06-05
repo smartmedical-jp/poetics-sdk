@@ -6,6 +6,22 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 )
 
+func NewRestClient() (*ClientWithResponses, error) {
+	return NewRestClientWithOptions(RestClientOptions{})
+}
+
+func NewRestClientWithOptions(options RestClientOptions) (*ClientWithResponses, error) {
+	opts := options.fallback()
+	apiKeyProvider, err := securityprovider.NewSecurityProviderApiKey("header", "X-API-Key", opts.ApiKey)
+	if err != nil {
+		return nil, err
+	}
+	return NewClientWithResponses(
+		opts.EndPoint,
+		WithRequestEditorFn(apiKeyProvider.Intercept),
+	)
+}
+
 type RestClientOptions struct {
 	ApiKey   string
 	EndPoint string
@@ -27,20 +43,4 @@ func (o RestClientOptions) fallback() RestClientOptions {
 	}
 
 	return out
-}
-
-func NewRestClient() (*ClientWithResponses, error) {
-	return NewRestClientWithOptions(RestClientOptions{})
-}
-
-func NewRestClientWithOptions(options RestClientOptions) (*ClientWithResponses, error) {
-	opts := options.fallback()
-	apiKeyProvider, err := securityprovider.NewSecurityProviderApiKey("header", "X-API-Key", opts.ApiKey)
-	if err != nil {
-		return nil, err
-	}
-	return NewClientWithResponses(
-		opts.EndPoint,
-		WithRequestEditorFn(apiKeyProvider.Intercept),
-	)
 }

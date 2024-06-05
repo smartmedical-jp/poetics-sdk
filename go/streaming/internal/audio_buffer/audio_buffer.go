@@ -5,6 +5,12 @@ import (
 	"sync"
 )
 
+type AudioBufferInterface interface {
+	AppendAudioData(data []byte)
+	GetFragmentAt(fragmentIndex int, isRecordingFinished bool) ([]byte, error)
+	ReleaseAudioDataBefore(fragmentIndex int)
+}
+
 // オーディオバッファ。１チャンネル分の音声データを保持する
 type AudioBuffer struct {
 	bytes                    []byte     // 音声データ
@@ -14,15 +20,17 @@ type AudioBuffer struct {
 	mu                       sync.Mutex // ロック用
 }
 
+var _ AudioBufferInterface = &AudioBuffer{}
+
 // オーディオバッファを初期化する
 func NewAudioBuffer() AudioBuffer {
 	return AudioBuffer{
-		bytesPerFragment: 16000,
+		bytesPerFragment: 16000, // JSONメッセージの最大サイズが32KB。Base64エンコードされてJSONに埋め込まれるぶんの余裕を持たせる
 	}
 }
 
 // オーディオバッファに音声データを追加する
-func (b *AudioBuffer) AppendData(
+func (b *AudioBuffer) AppendAudioData(
 	data []byte,
 ) {
 	b.mu.Lock()
@@ -81,7 +89,7 @@ func (b *AudioBuffer) GetFragmentAt(
 }
 
 // オーディオバッファから指定された番号のフラグメントを削除する
-func (b *AudioBuffer) DiscardDataBefore(
+func (b *AudioBuffer) ReleaseAudioDataBefore(
 	fragmentIndex int,
 ) {
 	b.discardableFragmentIndex = fragmentIndex
