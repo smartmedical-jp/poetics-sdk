@@ -3,13 +3,9 @@ package audio_buffer
 import (
 	"fmt"
 	"sync"
-)
 
-type AudioBufferInterface interface {
-	AppendAudioData(data []byte)
-	GetFragmentAt(fragmentIndex int, isRecordingFinished bool) ([]byte, error)
-	ReleaseAudioDataBefore(fragmentIndex int)
-}
+	"github.com/smartmedical-jp/poetics-sdk/go/streaming/internal/logging"
+)
 
 // オーディオバッファ。１チャンネル分の音声データを保持する
 type AudioBuffer struct {
@@ -33,6 +29,8 @@ func NewAudioBuffer() AudioBuffer {
 func (b *AudioBuffer) AppendAudioData(
 	data []byte,
 ) {
+	logging.Logger.Debug("AudioBuffer.AppendAudioData()", "data.length", len(data))
+
 	b.mu.Lock()
 	defer b.mu.Unlock()
 
@@ -50,42 +48,32 @@ func (b *AudioBuffer) GetFragmentAt(
 	b.mu.Lock()
 	defer b.mu.Unlock()
 
-	// すでに削除されたフラグメントの場合は常にエラー
-	if fragmentIndex < b.fromFragmentIndex {
-		return nil, fmt.Errorf("fragment %d is already discarded", fragmentIndex)
-	}
-
 	// 対象フラグメントの範囲を計算
 	fromByteIndex := (fragmentIndex - b.fromFragmentIndex) * b.bytesPerFragment
 	toByteIndex := fromByteIndex + b.bytesPerFragment
 
-	if isRecordingFinished {
-		// 録音完了の場合
+	// すでに開放されたフラグメントの場合はエラー
+	if fragmentIndex < b.fromFragmentIndex {
+		return nil, fmt.Errorf("fragment %d is already released", fragmentIndex)
+	}
 
-		// バッファの範囲外の場合はエラー
-		if fromByteIndex >= len(b.bytes) {
-			return nil, fmt.Errorf("fragment %d is not available", fragmentIndex)
-		}
+	// バッファの範囲よりも先の場合はエラーとせず nil を返す
+	if fromByteIndex > len(b.bytes) {
+		return nil, nil
+	}
 
-		// バッファの残りがフラグメント長に満たない場合は、残りを返す
-		if toByteIndex > len(b.bytes) {
+	// バッファの残りがフラグメント長に満たない場合は、isRecording=trueの場合は残りを返し、falseの場合は nil を返す
+	if toByteIndex > len(b.bytes) {
+		if isRecordingFinished {
 			return b.bytes[fromByteIndex:], nil
-		}
-
-		// バッファの範囲内の場合は、フラグメントを返す
-		return b.bytes[fromByteIndex:toByteIndex], nil
-
-	} else {
-		// 録音中の場合
-
-		// バッファの範囲外の場合はエラーとせず nil を返す（将来的に取得可能になる可能性があるため）
-		if toByteIndex > len(b.bytes) {
+		} else {
 			return nil, nil
 		}
-
-		// バッファの範囲内の場合は、フラグメントを返す
-		return b.bytes[fromByteIndex:toByteIndex], nil
 	}
+
+	// バッファの範囲内の場合は、フラグメントを返す
+	return b.bytes[fromByteIndex:toByteIndex], nil
+
 }
 
 // オーディオバッファから指定された番号のフラグメントを削除する

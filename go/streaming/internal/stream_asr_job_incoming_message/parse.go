@@ -11,11 +11,14 @@ func Parse(
 
 	// メッセージの型を判定する
 	var msgType struct {
-		Message string `json:"string"`
+		Message string `json:"message"`
 	}
 	err := json.Unmarshal([]byte(msg), &msgType)
 	if err != nil {
 		return nil, err
+	}
+	if msgType.Message == "" {
+		return nil, fmt.Errorf("message type is empty")
 	}
 
 	// メッセージの型に応じてパースする

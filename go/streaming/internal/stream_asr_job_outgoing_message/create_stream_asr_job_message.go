@@ -6,12 +6,12 @@ type CreateStreamAsrJobMessage struct {
 }
 
 type CreateStreamAsrJobMessageBody struct {
-	EnableDataLogging bool                                   `json:"enable_data_logging"`
-	ConversationTitle string                                 `json:"conversation_title"`
-	AudioEncoding     string                                 `json:"audio_encoding"`
-	AudioSampleRate   int                                    `json:"audio_sample_rate"`
-	ChannelCount      int                                    `json:"channel_count"`
-	Channels          []CreateStreamAsrJobMessageBodyChannel `json:"channels"`
+	EnableDataLogging bool                                    `json:"enable_data_logging"`
+	ConversationTitle string                                  `json:"conversation_title"`
+	AudioEncoding     string                                  `json:"audio_encoding"`
+	AudioSampleRate   int                                     `json:"audio_sample_rate"`
+	ChannelCount      int                                     `json:"channel_count"`
+	Channels          *[]CreateStreamAsrJobMessageBodyChannel `json:"channels"`
 }
 
 type CreateStreamAsrJobMessageBodyChannel struct {
@@ -24,7 +24,7 @@ func NewCreateStreamAsrJobMessage(
 	audioEncoding string,
 	audioSampleRate int,
 	channelCount int,
-	channels []CreateStreamAsrJobMessageBodyChannel,
+	channels *[]CreateStreamAsrJobMessageBodyChannel,
 ) CreateStreamAsrJobMessage {
 	return CreateStreamAsrJobMessage{
 		Command: "create_stream_asr_job",

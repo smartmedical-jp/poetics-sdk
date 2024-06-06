@@ -1,10 +1,8 @@
-package streaming
+package stream_asr_job_core
 
-import (
-	"time"
-)
+import "time"
 
-type TemporaryUtterance struct {
+type Utterance struct {
 	UtteranceID  string
 	ChannelIndex int
 	StartAt      time.Time
@@ -12,14 +10,14 @@ type TemporaryUtterance struct {
 	Text         string
 }
 
-func NewTemporaryUtterance(
+func NewUtterance(
 	utteranceID string,
 	channelIndex int,
 	startAt time.Time,
 	endAt time.Time,
 	text string,
-) TemporaryUtterance {
-	return TemporaryUtterance{
+) Utterance {
+	return Utterance{
 		UtteranceID:  utteranceID,
 		ChannelIndex: channelIndex,
 		StartAt:      startAt,

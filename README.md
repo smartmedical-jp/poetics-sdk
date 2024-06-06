@@ -1,1 +1,1 @@
-# poetics-sdk-go
+# poetics-sdk/go
