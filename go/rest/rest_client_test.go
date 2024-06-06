@@ -1,18 +1,15 @@
-package poetics
+package rest
 
 import (
 	"context"
-	"os"
 	"testing"
 )
-
-var apiKey = os.Getenv("POETICS_API_KEY")
 
 func TestNewRestClientWithResponses(t *testing.T) {
 
 	ctx := context.Background()
 
-	client, err := NewRestClient(apiKey)
+	client, err := NewRestClient()
 	if err != nil {
 		t.Fatalf("Error creating client: %v\n", err)
 	}
@@ -24,7 +21,9 @@ func TestNewRestClientWithResponses(t *testing.T) {
 	}
 
 	// conversations with invalid api key
-	invalidClient, err := NewRestClient("invalid")
+	invalidClient, err := NewRestClientWithOptions(RestClientOptions{
+		ApiKey: "invalid",
+	})
 	if err != nil {
 		t.Fatalf("Error creating client: %v\n", err)
 	}
