@@ -9,5 +9,5 @@ test:
 ifndef POETICS_API_KEY
 	$(error POETICS_API_KEY is not set)
 endif
-	go test -count=1 -v ./...
+	go test ./...
 	@echo "All tests passed"

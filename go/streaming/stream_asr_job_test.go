@@ -34,6 +34,21 @@ func Test_StreamAsrJob(t *testing.T) {
 	// 音声データの投入
 	job.EnqueueAudioData(0, data)
 
+	// 少し待つ
+	for {
+		time.Sleep(1 * time.Second)
+		if job.core.Debug_GetNextFragmentIndices()[0] > 0 {
+			break
+		}
+	}
+
+	// WebSocket接続の切断（再接続を確認）
+	job.conn.Debug_Disconnect()
+
+	// NextFragmentIndex を書き換える（問題がないことを確認）
+	indices := []int{0}
+	job.core.Debug_SetNextFragmentIndices(indices)
+
 	// 音声データの投入完了
 	job.FinishEnqueuingAudioData()
 

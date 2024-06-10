@@ -74,6 +74,7 @@ func (c *StreamAsrJobCore) ConnectToStreamAsrJob(options ConnectToStreamAsrJobOp
 
 func (c *StreamAsrJobCore) onReconnect() {
 	c.conn.Send(stream_asr_job_outgoing_message.NewConnectToStreamAsrJobMessage(c.jobID))
+	c.isNextFragmentIndicesInitialized = false
 	c.isNextFragmentSendable = false
 }
 
@@ -92,6 +93,11 @@ func (c *StreamAsrJobCore) OnJobStatusUpdatedMessage(msg stream_asr_job_incoming
 }
 
 func (c *StreamAsrJobCore) OnAudioFragmentSubmissionProgressMessage(msg stream_asr_job_incoming_message.AudioFragmentSubmissionProgressMessage) {
+	// TODO: fix
+	if len(msg.Body.Channels) == 0 {
+		return
+	}
+
 	for i := 0; i < c.channelCount; i++ {
 		c.nextFragmentIndices[i] = msg.Body.Channels[i].AudioFragmentCount
 	}
@@ -242,4 +248,12 @@ func (c *StreamAsrJobCore) SetOnTemporaryUtteranceFunc(f func(TemporaryUtterance
 
 func (c *StreamAsrJobCore) SetOnErrorMessageFunc(f func(error)) {
 	c.onErrorMessageFunc = f
+}
+
+func (c *StreamAsrJobCore) Debug_GetNextFragmentIndices() []int {
+	return c.nextFragmentIndices
+}
+
+func (c *StreamAsrJobCore) Debug_SetNextFragmentIndices(indices []int) {
+	c.nextFragmentIndices = indices
 }

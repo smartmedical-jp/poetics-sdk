@@ -180,3 +180,7 @@ func (c *WebsocketConnection) reconnect() {
 		c.onReconnect()
 	}
 }
+
+func (c *WebsocketConnection) Debug_Disconnect() {
+	c.conn.Close()
+}
