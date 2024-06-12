@@ -17,7 +17,7 @@ var (
 
 func main() {
 	// SDK のログレベルを Debug にする
-	streaming.SetDefaultLogger(slog.LevelDebug)
+	streaming.SetLogger(streaming.NewDefaultLoggerWithLevel(slog.LevelDebug))
 
 	// クライアントの初期化
 	// 環境変数 POETICS_API_KEY に API キーが設定されていることを前提とする

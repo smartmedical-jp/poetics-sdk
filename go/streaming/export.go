@@ -6,7 +6,7 @@ import (
 )
 
 var SetLogger = logging.SetLogger
-var SetDefaultLogger = logging.SetDefaultLogger
+var NewDefaultLoggerWithLevel = logging.NewDefaultLoggerWithLevel
 
 type CreateStreamAsrJobOptions = stream_asr_job_core.CreateStreamAsrJobOptions
 type CreateStreamAsrJobOptionsChannel = stream_asr_job_core.CreateStreamAsrJobOptionsChannel
