@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/samber/lo"
 	"github.com/smartmedical-jp/poetics-sdk/go/streaming"
 )
 
@@ -25,11 +24,20 @@ func main() {
 	client := streaming.NewStreamingClient()
 
 	// テスト用音声データを読み込む
-	wavFile := lo.Must(os.Open(wavFileName))
+	wavFile, err := os.Open(wavFileName)
+	if err != nil {
+		panic(err)
+	}
 	defer wavFile.Close()
-	wavInfo := lo.Must(wavFile.Stat())
+	wavInfo, err := wavFile.Stat()
+	if err != nil {
+		panic(err)
+	}
 	audioData := make([]byte, wavInfo.Size())
-	_ = lo.Must(wavFile.Read(audioData))
+	_, err = wavFile.Read(audioData)
+	if err != nil {
+		panic(err)
+	}
 
 	// ストリーミングジョブの作成
 	job, err := client.CreateStreamAsrJob(streaming.CreateStreamAsrJobOptions{
