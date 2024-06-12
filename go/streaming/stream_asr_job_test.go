@@ -11,7 +11,7 @@ import (
 
 func Test_StreamAsrJob(t *testing.T) {
 	// テスト音声の読み込み
-	file := lo.Must(os.Open("../../testdata/test_s16le_8k.wav"))
+	file := lo.Must(os.Open("../../testdata/short_s16le_8k.wav"))
 	defer file.Close()
 	fileInfo := lo.Must(file.Stat())
 	data := make([]byte, fileInfo.Size())
@@ -54,23 +54,27 @@ func Test_StreamAsrJob(t *testing.T) {
 
 	// 結果の取得
 	result := ""
-	u := <-job.SubscribeUtterance()
-	result = u.Text
+	for u := range job.SubscribeUtterance() {
+		if !u.IsTemporary {
+			result += u.Text
+		}
+	}
 	// resultが"こんにちは"を含むか確認
 	if !strings.Contains(result, "こんにちは") {
 		t.Errorf("result does not contain 'こんにちは': %s", result)
 	}
 
 	// ジョブにエラーが無いことを確認
-	err = <-job.SubscribeError()
-	if err != nil {
+	if err := job.Err(); err != nil {
 		t.Errorf("error: %s", err)
 	}
 
-	// ジョブの終了を確認
-	select {
-	case <-job.SubscribeDone():
-	case <-time.After(time.Second):
-		t.Error("job did not finish")
+	// ジョブの詳細を確認
+	detail, err := job.JobDetail()
+	if err != nil {
+		t.Errorf("error: %s", err)
+	}
+	if detail.Status != "completed" {
+		t.Errorf("unexpected job status: %s", detail.Status)
 	}
 }

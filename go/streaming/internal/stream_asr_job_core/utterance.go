@@ -4,6 +4,7 @@ import "time"
 
 type Utterance struct {
 	UtteranceID  string
+	IsTemporary  bool
 	ChannelIndex int
 	StartAt      time.Time
 	EndAt        time.Time
@@ -12,6 +13,7 @@ type Utterance struct {
 
 func NewUtterance(
 	utteranceID string,
+	isTemporary bool,
 	channelIndex int,
 	startAt time.Time,
 	endAt time.Time,
@@ -19,6 +21,7 @@ func NewUtterance(
 ) Utterance {
 	return Utterance{
 		UtteranceID:  utteranceID,
+		IsTemporary:  isTemporary,
 		ChannelIndex: channelIndex,
 		StartAt:      startAt,
 		EndAt:        endAt,

@@ -15,10 +15,8 @@ type StreamAsrJob struct {
 	conn *websocket_connection.WebsocketConnection
 	core *stream_asr_job_core.StreamAsrJobCore
 
-	utteranceChan          chan stream_asr_job_core.Utterance
-	temporaryUtteranceChan chan stream_asr_job_core.TemporaryUtterance
-	errorChan              chan error
-	doneChan               chan struct{}
+	utteranceChan chan stream_asr_job_core.Utterance
+	err           error
 }
 
 func newStreamAsrJobWithInitFunc(
@@ -35,24 +33,15 @@ func newStreamAsrJobWithInitFunc(
 	core := stream_asr_job_core.NewStreamAsrJobCore(conn, channelCount)
 
 	job := &StreamAsrJob{
-		conn:                   conn,
-		core:                   core,
-		utteranceChan:          make(chan stream_asr_job_core.Utterance, 100),
-		temporaryUtteranceChan: make(chan stream_asr_job_core.TemporaryUtterance, 100),
-		errorChan:              make(chan error, 1),
-		doneChan:               make(chan struct{}),
+		conn:          conn,
+		core:          core,
+		utteranceChan: make(chan stream_asr_job_core.Utterance, 100),
+		err:           nil,
 	}
 
 	core.SetOnUtteranceFunc(func(utterance Utterance) {
-		logging.Logger.Debug("UTTERANCE", "text", utterance.Text)
+		logging.Logger.Debug("UTTERANCE", "is_temporary", utterance.IsTemporary, "text", utterance.Text)
 		job.utteranceChan <- utterance
-	})
-	core.SetOnTemporaryUtteranceFunc(func(temporaryUtterance TemporaryUtterance) {
-		logging.Logger.Debug("TMP_UTTER", "text", temporaryUtterance.Text)
-		job.temporaryUtteranceChan <- temporaryUtterance
-	})
-	core.SetOnErrorMessageFunc(func(err error) {
-		logging.Logger.Warn("ignoring error message", "error", err)
 	})
 
 	init(job.core)
@@ -119,15 +108,12 @@ func (j *StreamAsrJob) processMessage(msgStr string) error {
 func (j *StreamAsrJob) run() {
 	defer j.conn.Close()
 	defer close(j.utteranceChan)
-	defer close(j.temporaryUtteranceChan)
-	defer close(j.errorChan)
-	defer close(j.doneChan)
 
 	for {
 		// 送信
 		doContinue, err := j.core.Step()
 		if err != nil {
-			j.errorChan <- err
+			j.err = err
 			return
 		}
 		if !doContinue {
@@ -140,12 +126,12 @@ func (j *StreamAsrJob) run() {
 			return
 
 		case err := <-j.conn.SubscribeError():
-			j.errorChan <- err
+			j.err = err
 			return
 
 		case msg := <-j.conn.SubscribeMessage():
 			if err := j.processMessage(msg); err != nil {
-				j.errorChan <- err
+				j.err = err
 				return
 			}
 
@@ -159,22 +145,18 @@ func (j *StreamAsrJob) SubscribeUtterance() <-chan Utterance {
 	return j.utteranceChan
 }
 
-func (j *StreamAsrJob) SubscribeTemporaryUtterance() <-chan TemporaryUtterance {
-	return j.temporaryUtteranceChan
-}
-
-func (j *StreamAsrJob) SubscribeError() <-chan error {
-	return j.errorChan
-}
-
-func (j *StreamAsrJob) SubscribeDone() <-chan struct{} {
-	return j.doneChan
-}
-
 func (j *StreamAsrJob) EnqueueAudioData(channelIndex int, audioData []byte) error {
 	return j.core.EnqueueAudioData(channelIndex, audioData)
 }
 
 func (j *StreamAsrJob) FinishEnqueuingAudioData() {
 	j.core.FinishEnqueuingAudioData()
+}
+
+func (j *StreamAsrJob) JobDetail() (StreamAsrJobDetail, error) {
+	return j.core.JobDetail()
+}
+
+func (j *StreamAsrJob) Err() error {
+	return j.err
 }

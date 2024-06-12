@@ -22,15 +22,13 @@ type StreamAsrJobCore struct {
 	isNextFragmentIndicesInitialized bool
 	nextFragmentIndices              []int
 	isJobDetailInitialized           bool
-	jobStatus                        string
-	jobID                            string
+	jobDetail                        StreamAsrJobDetail
 	isNextFragmentSendable           bool
 	isEnqueuingAudioDataFinished     bool
 	isCloseJobMessageSent            bool
 
-	onUtteranceFunc          func(Utterance)
-	onTemporaryUtteranceFunc func(TemporaryUtterance)
-	onErrorMessageFunc       func(error)
+	onUtteranceFunc    func(Utterance)
+	onErrorMessageFunc func(error)
 }
 
 var _ StreamAsrJobCoreInterface = &StreamAsrJobCore{}
@@ -48,15 +46,13 @@ func NewStreamAsrJobCore(conn connectionInterface, channelCount int) *StreamAsrJ
 		isNextFragmentIndicesInitialized: false,
 		nextFragmentIndices:              make([]int, channelCount),
 		isJobDetailInitialized:           false,
-		jobStatus:                        "",
-		jobID:                            "",
+		jobDetail:                        StreamAsrJobDetail{},
 		isNextFragmentSendable:           false,
 		isEnqueuingAudioDataFinished:     false,
 		isCloseJobMessageSent:            false,
 
-		onUtteranceFunc:          func(Utterance) {},
-		onTemporaryUtteranceFunc: func(TemporaryUtterance) {},
-		onErrorMessageFunc:       func(error) {},
+		onUtteranceFunc:    func(Utterance) {},
+		onErrorMessageFunc: func(error) {},
 	}
 
 	conn.SetOnReconnect(core.onReconnect)
@@ -73,7 +69,7 @@ func (c *StreamAsrJobCore) ConnectToStreamAsrJob(options ConnectToStreamAsrJobOp
 }
 
 func (c *StreamAsrJobCore) onReconnect() {
-	c.conn.Send(stream_asr_job_outgoing_message.NewConnectToStreamAsrJobMessage(c.jobID))
+	c.conn.Send(stream_asr_job_outgoing_message.NewConnectToStreamAsrJobMessage(c.jobDetail.StreamAsrJobID))
 	c.isNextFragmentIndicesInitialized = false
 	c.isNextFragmentSendable = false
 }
@@ -83,21 +79,24 @@ func (c *StreamAsrJobCore) OnErrorMessage(msg stream_asr_job_incoming_message.Er
 }
 
 func (c *StreamAsrJobCore) OnJobDetailMessage(msg stream_asr_job_incoming_message.JobDetailMessage) {
-	c.jobID = msg.Body.StreamAsrJobID
-	c.jobStatus = msg.Body.Status
+	c.jobDetail = StreamAsrJobDetail{
+		StreamAsrJobID:       msg.Body.StreamAsrJobID,
+		ConversationID:       msg.Body.ConversationID,
+		IsDataLoggingEnabled: msg.Body.IsDataLoggingEnabled,
+		AudioEncoding:        msg.Body.AudioEncoding,
+		AudioSampleRate:      msg.Body.AudioSampleRate,
+		Status:               msg.Body.Status,
+		ChannelCount:         msg.Body.ChannelCount,
+		CreatedAt:            msg.Body.CreatedAt,
+	}
 	c.isJobDetailInitialized = true
 }
 
 func (c *StreamAsrJobCore) OnJobStatusUpdatedMessage(msg stream_asr_job_incoming_message.JobStatusUpdatedMessage) {
-	c.jobStatus = msg.Body.Status
+	c.jobDetail.Status = msg.Body.Status
 }
 
 func (c *StreamAsrJobCore) OnAudioFragmentSubmissionProgressMessage(msg stream_asr_job_incoming_message.AudioFragmentSubmissionProgressMessage) {
-	// TODO: fix
-	if len(msg.Body.Channels) == 0 {
-		return
-	}
-
 	for i := 0; i < c.channelCount; i++ {
 		c.nextFragmentIndices[i] = msg.Body.Channels[i].AudioFragmentCount
 	}
@@ -106,19 +105,21 @@ func (c *StreamAsrJobCore) OnAudioFragmentSubmissionProgressMessage(msg stream_a
 }
 
 func (c *StreamAsrJobCore) OnTemporaryUtteranceMessage(msg stream_asr_job_incoming_message.TemporaryUtteranceMessage) {
-	u := NewTemporaryUtterance(
+	u := NewUtterance(
 		msg.Body.UtteranceID,
+		true,
 		msg.Body.ChannelIndex,
 		msg.Body.StartAt,
 		msg.Body.EndAt,
 		msg.Body.Text,
 	)
-	c.onTemporaryUtteranceFunc(u)
+	c.onUtteranceFunc(u)
 }
 
 func (c *StreamAsrJobCore) OnUtteranceMessage(msg stream_asr_job_incoming_message.UtteranceMessage) {
 	u := NewUtterance(
 		msg.Body.UtteranceID,
+		false,
 		msg.Body.ChannelIndex,
 		msg.Body.StartAt,
 		msg.Body.EndAt,
@@ -174,10 +175,10 @@ func (c *StreamAsrJobCore) Step() (continueLoop bool, err error) {
 	}
 
 	// 終了条件を満たしていたら終了
-	if c.jobStatus == "completed" {
+	if c.jobDetail.Status == "completed" {
 		return false, nil
 	}
-	if c.jobStatus == "error" {
+	if c.jobDetail.Status == "error" {
 		return false, fmt.Errorf("job status is error")
 	}
 
@@ -186,13 +187,13 @@ func (c *StreamAsrJobCore) Step() (continueLoop bool, err error) {
 	if err != nil {
 		return false, err
 	}
-	if c.jobStatus == "open" && isAllAudioDataSent && !c.isCloseJobMessageSent {
+	if c.jobDetail.Status == "open" && isAllAudioDataSent && !c.isCloseJobMessageSent {
 		c.conn.Send(stream_asr_job_outgoing_message.NewCloseStreamAsrJobMessage())
 		c.isCloseJobMessageSent = true
 	}
 
 	// 各チャンネルについて、次のフラグメントが送信可能であれば送信する
-	if c.jobStatus == "open" {
+	if c.jobDetail.Status == "open" {
 		for i := 0; i < c.channelCount; i++ {
 			if c.isNextFragmentSendable {
 				fragmentIndex := c.nextFragmentIndices[i]
@@ -242,12 +243,15 @@ func (c *StreamAsrJobCore) SetOnUtteranceFunc(f func(Utterance)) {
 	c.onUtteranceFunc = f
 }
 
-func (c *StreamAsrJobCore) SetOnTemporaryUtteranceFunc(f func(TemporaryUtterance)) {
-	c.onTemporaryUtteranceFunc = f
-}
-
 func (c *StreamAsrJobCore) SetOnErrorMessageFunc(f func(error)) {
 	c.onErrorMessageFunc = f
+}
+
+func (c *StreamAsrJobCore) JobDetail() (StreamAsrJobDetail, error) {
+	if !c.isJobDetailInitialized {
+		return StreamAsrJobDetail{}, fmt.Errorf("job detail is not initialized")
+	}
+	return c.jobDetail, nil
 }
 
 func (c *StreamAsrJobCore) Debug_GetNextFragmentIndices() []int {

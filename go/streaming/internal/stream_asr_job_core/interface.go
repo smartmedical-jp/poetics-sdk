@@ -19,11 +19,11 @@ type StreamAsrJobCoreInterface interface {
 	OnReceiveMessageTimeout()
 
 	SetOnUtteranceFunc(func(Utterance))
-	SetOnTemporaryUtteranceFunc(func(TemporaryUtterance))
 	SetOnErrorMessageFunc(func(error))
 
 	EnqueueAudioData(channelIndex int, data []byte) error
 	FinishEnqueuingAudioData()
 
 	Step() (continueLoop bool, err error)
+	JobDetail() (StreamAsrJobDetail, error)
 }
