@@ -1,7 +1,6 @@
 package websocket_connection
 
 import (
-	"log/slog"
 	"math/rand"
 	"net/http"
 	"net/http/httptest"
@@ -11,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/smartmedical-jp/poetics-sdk/go/streaming/internal/logging"
 )
 
 // テスト用の WebSocket サーバーを立ち上げる
@@ -18,9 +18,9 @@ func createWebsocketEchoServer() (*httptest.Server, string) {
 	upgrader := websocket.Upgrader{}
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		conn, _ := upgrader.Upgrade(w, r, nil)
-		slog.Info("server connected")
+		logging.Logger.Debug("server connected")
 		defer func() {
-			slog.Info("server disconnected")
+			logging.Logger.Debug("server disconnected")
 			conn.Close()
 		}()
 		for {

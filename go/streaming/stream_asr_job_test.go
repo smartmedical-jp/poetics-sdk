@@ -1,6 +1,7 @@
 package streaming
 
 import (
+	"log/slog"
 	"os"
 	"strings"
 	"testing"
@@ -10,6 +11,9 @@ import (
 )
 
 func Test_StreamAsrJob(t *testing.T) {
+	// ログをDebugレベルで出力
+	SetLogger(NewDefaultLoggerWithLevel(slog.LevelDebug))
+
 	// テスト音声の読み込み
 	file := lo.Must(os.Open("../../testdata/short_s16le_8k.wav"))
 	defer file.Close()
@@ -42,12 +46,12 @@ func Test_StreamAsrJob(t *testing.T) {
 		}
 	}
 
-	// WebSocket接続の切断（再接続を確認）
-	job.conn.Debug_Disconnect()
-
 	// NextFragmentIndex を書き換える（問題がないことを確認）
 	indices := []int{0}
 	job.core.Debug_SetNextFragmentIndices(indices)
+
+	// WebSocket接続の切断（再接続を確認）
+	job.conn.Debug_Disconnect()
 
 	// 音声データの投入完了
 	job.FinishEnqueuingAudioData()
