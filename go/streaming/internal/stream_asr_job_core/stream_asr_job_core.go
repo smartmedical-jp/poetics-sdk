@@ -26,9 +26,9 @@ type StreamAsrJobCore struct {
 	isNextFragmentSendable           bool
 	isEnqueuingAudioDataFinished     bool
 	isCloseJobMessageSent            bool
+	errorMessageCount                int
 
-	onUtteranceFunc    func(Utterance)
-	onErrorMessageFunc func(error)
+	onUtteranceFunc func(Utterance)
 }
 
 var _ StreamAsrJobCoreInterface = &StreamAsrJobCore{}
@@ -50,9 +50,9 @@ func NewStreamAsrJobCore(conn connectionInterface, channelCount int) *StreamAsrJ
 		isNextFragmentSendable:           false,
 		isEnqueuingAudioDataFinished:     false,
 		isCloseJobMessageSent:            false,
+		errorMessageCount:                0,
 
-		onUtteranceFunc:    func(Utterance) {},
-		onErrorMessageFunc: func(error) {},
+		onUtteranceFunc: func(Utterance) {},
 	}
 
 	conn.SetOnReconnect(core.onReconnect)
@@ -75,7 +75,7 @@ func (c *StreamAsrJobCore) onReconnect() {
 }
 
 func (c *StreamAsrJobCore) OnErrorMessage(msg stream_asr_job_incoming_message.ErrorMessage) {
-	c.onErrorMessageFunc(fmt.Errorf("ignorable error message: %s", msg.Body.Message))
+	c.errorMessageCount++
 }
 
 func (c *StreamAsrJobCore) OnJobDetailMessage(msg stream_asr_job_incoming_message.JobDetailMessage) {
@@ -182,6 +182,11 @@ func (c *StreamAsrJobCore) Step() (continueLoop bool, err error) {
 		return false, fmt.Errorf("job status is error")
 	}
 
+	// エラーメッセージを連続で一定回数受信した場合は終了
+	if c.errorMessageCount >= 30 {
+		return false, fmt.Errorf("error message count limit exceeded")
+	}
+
 	// 音声データ送信が完了している場合は close_stream_asr_job を送信
 	isAllAudioDataSent, err := c.isAllAudioDataSent()
 	if err != nil {
@@ -241,10 +246,6 @@ func buildCreateStreamAsrJobMessage(
 
 func (c *StreamAsrJobCore) SetOnUtteranceFunc(f func(Utterance)) {
 	c.onUtteranceFunc = f
-}
-
-func (c *StreamAsrJobCore) SetOnErrorMessageFunc(f func(error)) {
-	c.onErrorMessageFunc = f
 }
 
 func (c *StreamAsrJobCore) JobDetail() (StreamAsrJobDetail, error) {
