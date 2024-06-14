@@ -17,8 +17,9 @@ func Test_StreamAsrJob(t *testing.T) {
 	// テスト音声の読み込み
 	file := lo.Must(os.Open("../../testdata/short_s16le_8k.wav"))
 	defer file.Close()
+	_ = lo.Must(file.Seek(44, 0))
 	fileInfo := lo.Must(file.Stat())
-	data := make([]byte, fileInfo.Size())
+	data := make([]byte, fileInfo.Size()-44)
 	_ = lo.Must(file.Read(data))
 
 	// ストリーミングクライアントの作成

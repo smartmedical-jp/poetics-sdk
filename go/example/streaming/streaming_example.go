@@ -24,16 +24,21 @@ func main() {
 	client := streaming.NewStreamingClient()
 
 	// テスト用音声データを読み込む
+	const wavHeaderSize = 44
 	wavFile, err := os.Open(wavFileName)
 	if err != nil {
 		panic(err)
 	}
 	defer wavFile.Close()
+	_, err = wavFile.Seek(wavHeaderSize, 0)
+	if err != nil {
+		panic(err)
+	}
 	wavInfo, err := wavFile.Stat()
 	if err != nil {
 		panic(err)
 	}
-	audioData := make([]byte, wavInfo.Size())
+	audioData := make([]byte, wavInfo.Size()-wavHeaderSize)
 	_, err = wavFile.Read(audioData)
 	if err != nil {
 		panic(err)
