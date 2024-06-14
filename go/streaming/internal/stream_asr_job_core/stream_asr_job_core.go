@@ -178,8 +178,8 @@ func (c *StreamAsrJobCore) Step() (continueLoop bool, err error) {
 	if c.jobDetail.Status == "completed" {
 		return false, nil
 	}
-	if c.jobDetail.Status == "error" {
-		return false, fmt.Errorf("job status is error")
+	if c.jobDetail.Status == "failed" {
+		return false, fmt.Errorf("job status is failed")
 	}
 
 	// エラーメッセージを連続で一定回数受信した場合は終了
