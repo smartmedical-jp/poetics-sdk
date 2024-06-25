@@ -135,11 +135,15 @@ func (c *WebsocketConnection) receiveLoop() {
 
 func (c *WebsocketConnection) sendLoop() {
 	for {
+
 		if c.isClosed {
 			return
 		}
 
+		c.mutex.Lock()
+
 		if len(c.messageBuffer) == 0 {
+			c.mutex.Unlock()
 			continue
 		}
 
@@ -148,10 +152,10 @@ func (c *WebsocketConnection) sendLoop() {
 		logging.Logger.Debug("SND", "message", logging.TrimString(message, 100))
 		if err := c.conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
 			time.Sleep(500 * time.Millisecond)
+			c.mutex.Unlock()
 			continue
 		}
 
-		c.mutex.Lock()
 		c.messageBuffer = c.messageBuffer[1:]
 		c.mutex.Unlock()
 	}
