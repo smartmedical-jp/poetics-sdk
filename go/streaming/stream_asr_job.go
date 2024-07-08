@@ -81,6 +81,7 @@ func (j *StreamAsrJob) processMessage(msgStr string) error {
 
 	switch msg := parsed.(type) {
 	case stream_asr_job_incoming_message.ErrorMessage:
+		slog.Warn("error message received", "code", msg.Body.Code, "message", msg.Body.Message)
 		j.core.OnErrorMessage(msg)
 
 	case stream_asr_job_incoming_message.JobDetailMessage:
