@@ -199,8 +199,8 @@ func (c *StreamAsrJobCore) Step() (continueLoop bool, err error) {
 
 	// 各チャンネルについて、次のフラグメントが送信可能であれば送信する
 	if c.jobDetail.Status == "open" {
-		for i := 0; i < c.channelCount; i++ {
-			if c.isNextFragmentSendable {
+		if c.isNextFragmentSendable {
+			for i := 0; i < c.channelCount; i++ {
 				fragmentIndex := c.nextFragmentIndices[i]
 				f, err := c.audioBuffers[i].GetFragmentAt(fragmentIndex, c.isEnqueuingAudioDataFinished)
 				if err != nil {
