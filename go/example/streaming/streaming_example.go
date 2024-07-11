@@ -17,6 +17,7 @@ var (
 
 func main() {
 	// SDK のログレベルを Debug にする
+	// 環境変数 POETICS_SDK_LOG_LEVEL にログレベルを設定することでも変更可能
 	streaming.SetLogger(streaming.NewDefaultLoggerWithLevel(slog.LevelDebug))
 
 	// クライアントの初期化

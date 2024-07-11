@@ -1,7 +1,6 @@
 package streaming
 
 import (
-	"log/slog"
 	"os"
 	"strings"
 	"testing"
@@ -11,9 +10,6 @@ import (
 )
 
 func Test_StreamAsrJob(t *testing.T) {
-	// ログをDebugレベルで出力
-	SetLogger(NewDefaultLoggerWithLevel(slog.LevelDebug))
-
 	// テスト音声の読み込み
 	file := lo.Must(os.Open("../../testdata/short_s16le_8k.wav"))
 	defer file.Close()
