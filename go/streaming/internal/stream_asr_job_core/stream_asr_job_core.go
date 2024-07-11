@@ -27,6 +27,7 @@ type StreamAsrJobCore struct {
 	isEnqueuingAudioDataFinished     bool
 	isCloseJobMessageSent            bool
 	errorMessageCount                int
+	nextSendingFragmentIndex         int
 
 	onUtteranceFunc func(Utterance)
 }
@@ -51,6 +52,7 @@ func NewStreamAsrJobCore(conn connectionInterface, channelCount int) *StreamAsrJ
 		isEnqueuingAudioDataFinished:     false,
 		isCloseJobMessageSent:            false,
 		errorMessageCount:                0,
+		nextSendingFragmentIndex:         0,
 
 		onUtteranceFunc: func(Utterance) {},
 	}
@@ -197,20 +199,22 @@ func (c *StreamAsrJobCore) Step() (continueLoop bool, err error) {
 		c.isCloseJobMessageSent = true
 	}
 
-	// 各チャンネルについて、次のフラグメントが送信可能であれば送信する
+	// 各チャンネルについて、次のフラグメントが送信可能であれば送信する。ループごとにチャンネルは交互に送信する
 	if c.jobDetail.Status == "open" {
 		if c.isNextFragmentSendable {
-			for i := 0; i < c.channelCount; i++ {
-				fragmentIndex := c.nextFragmentIndices[i]
-				f, err := c.audioBuffers[i].GetFragmentAt(fragmentIndex, c.isEnqueuingAudioDataFinished)
-				if err != nil {
-					return false, err
-				}
-				if f != nil {
-					c.conn.Send(stream_asr_job_outgoing_message.NewSubmitAudioFragmentMessage(i, fragmentIndex, f))
-				}
-				c.isNextFragmentSendable = false
+			i := c.nextSendingFragmentIndex
+			c.nextSendingFragmentIndex = (c.nextSendingFragmentIndex + 1) % c.channelCount
+
+			fragmentIndex := c.nextFragmentIndices[i]
+			f, err := c.audioBuffers[i].GetFragmentAt(fragmentIndex, c.isEnqueuingAudioDataFinished)
+			if err != nil {
+				return false, err
 			}
+			if f != nil {
+				c.conn.Send(stream_asr_job_outgoing_message.NewSubmitAudioFragmentMessage(i, fragmentIndex, f))
+			}
+
+			c.isNextFragmentSendable = false
 		}
 	}
 
