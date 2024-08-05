@@ -7,7 +7,8 @@
 - [1. Description](#1-description)
 - [2. How To Run](#2-how-to-run)
 - [3. SDK Build Guide](#3-sdk-build-guide)
-- [4. License](#4-license)
+- [4. SDK Class Diagram](#4-sdk-class-diagram)
+- [5. License](#5-license)
 
 # 1. Description
 
@@ -20,8 +21,12 @@ Check the [[`src/example_training`](./src/example_streaming/)] directory.
 
 # 3. SDK Build Guide
 
-Check the [[BUILD.md](./BUILD.md)] page.  
+Check the [[BUILD.md](./BUILD.md)] page.
 
-# 4. License
+# 4. SDK Class Diagram
+
+![diagram](img/PoeticsSdk.svg)
+
+# 5. License
 
 All the content in this repository is licensed under the [MIT License](LICENSE.txt).

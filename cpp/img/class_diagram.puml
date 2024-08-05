@@ -1,0 +1,90 @@
+@startuml PoeticsSdk
+class       StreamingClient {
+    +std::string url
+
+    +StreamingClient(StreamingClientOptions options)
+
+    -StreamAsrJob createStreamAsrJob(CreateStreamAsrJobOptions options)
+    -StreamAsrJob connectToStreamAsrJob(ConnectToStreamAsrJobObtions options)
+}
+
+class StreamAsrJob {
+    +*WebSocketConnection conn
+    +*StreamAsrJobCore core
+    +chan Utterance utteranceChan
+    +Error error
+
+    +StreamAsrJob(std::string url, int channelCount, std::function<StreamAsrJobCore>)
+    
+    +*StreamAsrJob CreateStreamAsrJob(std::string url, CreateStreamAsrJobOptions options)
+    +*StreamAsrJob ConnectToStreamAsrJob(std::string utl, ConnectToStreamAsrJobOptions options)
+
+    -Error processMessage(std::string msgStr)
+    -void run()
+    -void subscribeUtterance()
+    -Error enqueueAudioData(int channelIndex, byte[] audioData)
+    -void finishEnqueuingAudioData()
+    -(StreamAsrJobDetail, Error) jobDetail()
+    -Error Err()
+}
+
+interface ConnectionInterface<typename T> {
+	+SetOnReconnect(std::function onReconnect)
+	+Send(T message)
+}
+
+class StreamAsrJobCore {
+	-ConnectionInterface conn
+
+    -int channelCount
+    -AudioBuffer[] audioBuffers
+    -bool isNextFragmentIndicesInitialized
+    -int[] nextFragmentIndices
+    -bool isJobDetailInitialized
+    -StreamAsrJobDetail jobDetail
+    -bool isNextFragmentSendable
+    -bool isEnqueuingAudioDataFinished
+    -bool isCloseJobMessageSent
+    -int errorMessageCount
+    -int nextSendingFragmentIndex
+
+	-std::function<Utterance> onUtteranceFunc
+
+    +StreamAsrJobCore(ConnectionInterface conn, int channelCount)
+    +CreateStreamAsrJobMessage buildCreateStreamAsrJobMessage(CreateStreamAsrJobOptions options)
+
+    -createStreamAsrJob(CreateStreamAsrJobOptions options)
+    -connectToStreamAsrJob(ConnectToStreamAsrJobOptions options)
+    -onReconnect()
+    -onErrorMessage(ErrorMessage msg)
+    -onJobDetailMessage(JobDetailMessage msg)
+    -onJobStatusUpdatedMessage(JobStatusUpdatedMessage msg)
+    -onAudioFragmentSubmissionProgressMessage(AudioFragmentSubmissionProgressMessage msg)
+    -onTemporaryUtteranceMessage(TemporaryUtteranceMessage msg)
+    -onUtteranceMessage(UtteranceMessage msg)
+    -onReceiveMessageTimeout()
+    -enqueueAudioData(int channelIndex, byte[] data)
+    -finishEnqueuingAudioData()
+    -(bool, Error) isAllAudioDataSent()
+    -(bool continueLoop, Error err) step()
+    -setOnUtteranceFunc(std::function<Utterance> func)
+    -(StreamAsrJobDetail, error) jobDetail()
+}
+
+class AudioBuffer {
+    -byte[] bytes
+    -int fromFragmentIndex
+    -int bytesPerFragment
+    -int discardableFragmentIndex
+    -Mutex mutex
+
+    +AppendAudioData(byte[] data)
+    +GetFragmentAt(int fragmentIndex, bool isRecordingFinished)
+    +ReleaseAudioDataBefore(int fragmentIndex)
+}
+
+StreamingClient ..> StreamAsrJob
+StreamAsrJob *-- StreamAsrJobCore
+StreamAsrJobCore <|.. ConnectionInterface
+StreamAsrJobCore <--* AudioBuffer
+@enduml
