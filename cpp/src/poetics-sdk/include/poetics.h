@@ -6,6 +6,8 @@
 
 #include <fmt/core.h>
 
+#include "../header/streaming/streaming_client.h"
+
 #ifdef _WIN32
 #ifdef POETICS_H_EXPORTS
 #define POETICS_H_API __declspec(dllexport)

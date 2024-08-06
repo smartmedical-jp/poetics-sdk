@@ -8,6 +8,8 @@ target_link_libraries(poetics-sdk PRIVATE fmt::fmt-header-only)
 
 target_link_libraries(poetics-sdk PRIVATE Poco::Foundation Poco::Net)
 
+set_property(TARGET poetics-sdk PROPERTY CXX_STANDARD 20)
+
 set(ARTIFACT_SRC_DIR "${CMAKE_BINARY_DIR}/poetics-sdk/${CMAKE_BUILD_TYPE}")
 set(ARTIFACT_DST_DIR "${CMAKE_HOME_DIRECTORY}/lib")
 
