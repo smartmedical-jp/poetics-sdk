@@ -62,11 +62,14 @@ If you have already installed Visual Studio 2022, you can skip this part.
 
 ### 5.1.3 Open VSCode from Developer terminal for Visual Studio
 
+> [!IMPORTANT]  
+> To properly build the project, you should **always** run VSCode from Developer terminal for Visual Studio.  
+> Follow the guide below firmly.  
+
 - [**IMPORTANT**] If you are to build x86 binary,
-  - Execute `Developer PowerShell for Visual Studio 2022`
+  - Run `launch_devtools_x86.bat`
 - [**IMPORTANT**] If you are to build x64 binary,
-  - Execute `x64 Native Tools Command Prompt for VS 2022`
-- Go to the project directory (For example, run `cd "C:/REPO/POCOExercise"`)
+  - Run `launch_devtools_x64.bat`
 - Run `code .`
 
 Now you can build and run the project! Keep in mind you should always open the project like this way.
@@ -78,6 +81,8 @@ Now you can build and run the project! Keep in mind you should always open the p
 [cmake] CMake Error: CMAKE_C_COMPILER not set, after EnableLanguage
 [cmake] CMake Error: CMAKE_CXX_COMPILER not set, after EnableLanguage
 ```
+
+In this case, you **should remove the `builds` directory** and run the VSCode by launching the `launch_devtools_x**.bat` mentioned above.
 
 ## 5.2 Setting up VSCode Extensions
 
