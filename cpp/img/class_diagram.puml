@@ -1,5 +1,6 @@
 @startuml PoeticsSdk
 set namespaceSeparator ::
+skinparam groupInheritance 3
 
 class streaming::StreamingClient {
     +std::string url
@@ -19,7 +20,7 @@ class streaming::asr_job::StreamAsrJob {
     +StreamAsrJob(std::string url, int channelCount, std::function<StreamAsrJobCore>)
     
     +*StreamAsrJob CreateStreamAsrJob(std::string url, CreateStreamAsrJobOptions options)
-    +*StreamAsrJob ConnectToStreamAsrJob(std::string utl, ConnectToStreamAsrJobOptions options)
+    +*StreamAsrJob ConnectToStreamAsrJob(std::string url, ConnectToStreamAsrJobOptions options)
 
     -Error processMessage(std::string msgStr)
     -void run()
@@ -310,6 +311,7 @@ StreamingClient ..> StreamAsrJob
 StreamAsrJob *-- StreamAsrJobCore
 StreamAsrJob *-- WebSocketConnection
 StreamAsrJob *-- Utterance
+StreamAsrJob ..> StreamAsrJobDetail
 StreamAsrJobCore <|.. IConnection
 StreamAsrJobCore <--* AudioBuffer
 StreamAsrJobCore <--* StreamAsrJobDetail
