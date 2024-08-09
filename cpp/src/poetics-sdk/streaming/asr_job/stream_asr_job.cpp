@@ -13,4 +13,36 @@ namespace poetics::streaming::asr_job {
     {
         return unique_ptr<StreamAsrJob>();
     }
+
+    Error StreamAsrJob::processMessage(string msgStr)
+    {
+        return Error("not implemented");
+    }
+
+    void StreamAsrJob::run()
+    {
+    }
+
+    void StreamAsrJob::subscribeUtterance()
+    {
+    }
+    
+    Error StreamAsrJob::enqueueAudioData(int channelIndex, vector<uint8_t> audioData)
+    {
+        return Error("not implemented");
+    }
+
+    void StreamAsrJob::finishEnqueuingAudioData()
+    {
+    }
+
+    optional<StreamAsrJobDetail> StreamAsrJob::jobDetail()
+    {
+        return std::nullopt;
+    }
+
+    Error StreamAsrJob::Err()
+    {
+        return Error("not implemented");
+    }
 }
