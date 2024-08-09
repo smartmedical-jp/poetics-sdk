@@ -125,7 +125,7 @@ class streaming::asr_job::core::StreamAsrJobDetail {
 class streaming::asr_job::core::Utterance {
     +string UtteranceID
     +bool IsTemporary
-    +int ChannelInde
+    +int ChannelIndex
     +time StartAt
     +time EndAt
     +string Text
