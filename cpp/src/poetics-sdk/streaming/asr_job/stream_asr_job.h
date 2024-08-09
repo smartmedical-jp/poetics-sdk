@@ -14,6 +14,7 @@ using std::optional;
 #include "core/stream_asr_job_core.h"
 #include "core/options.h"
 #include "core/stream_asr_job_detail.h"
+#include "core/utterance.h"
 #include "../websocket_connection/websocket_connection.h"
 #include "../../poetics_error.h"
 using namespace poetics::streaming::asr_job::core;
@@ -30,7 +31,7 @@ namespace poetics::streaming::asr_job {
     private:
         poetics::streaming::websocket_connection::WebsocketConnection<T> conn;
         //StreamAsrJobCore core
-        //Utterance utterance // is chan in Golang
+        Utterance utterance; // is chan in Golang
         Error error;
 
         Error   processMessage(string msgStr);
