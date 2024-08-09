@@ -14,10 +14,12 @@ using std::optional;
 #include "core/stream_asr_job_core.h"
 #include "core/options.h"
 #include "core/stream_asr_job_detail.h"
+#include "../websocket_connection/websocket_connection.h"
 #include "../../poetics_error.h"
 using namespace poetics::streaming::asr_job::core;
 
 namespace poetics::streaming::asr_job {
+    template <typename T>
     class StreamAsrJob
     {
     public:
@@ -26,7 +28,7 @@ namespace poetics::streaming::asr_job {
         unique_ptr<StreamAsrJob> CreateStreamAsrJob(string url, CreateStreamAsrJobOptions options);
         unique_ptr<StreamAsrJob> ConnectToStreamAsrJob(string url, ConnectToStreamAsrJobOptions options);
     private:
-        //WebSocketConnection conn
+        poetics::streaming::websocket_connection::WebsocketConnection<T> conn;
         //StreamAsrJobCore core
         //Utterance utterance // is chan in Golang
         Error error;

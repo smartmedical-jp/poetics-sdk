@@ -14,6 +14,7 @@ using namespace poetics::streaming::asr_job::core;
 namespace poetics::streaming {
     class StreamingClientOptions;
 
+    template <typename T>
     class StreamingClient
     {
     private:
@@ -21,8 +22,8 @@ namespace poetics::streaming {
     public:
         StreamingClient(StreamingClientOptions options);
 
-        StreamAsrJob createStreamAsrJob(CreateStreamAsrJobOptions options);
-        StreamAsrJob connectToStreamAsrJob(ConnectToStreamAsrJobOptions options);
+        StreamAsrJob<T> createStreamAsrJob(CreateStreamAsrJobOptions options);
+        StreamAsrJob<T> connectToStreamAsrJob(ConnectToStreamAsrJobOptions options);
     };
 
     class StreamingClientOptions
