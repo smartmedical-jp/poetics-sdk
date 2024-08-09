@@ -1,6 +1,6 @@
 project(poetics-sdk)
 
-add_library(poetics-sdk SHARED source/poetics.cpp)
+add_library(poetics-sdk SHARED poetics.cpp)
 
 find_package(Poco REQUIRED COMPONENTS Foundation Net)
 find_package(fmt CONFIG REQUIRED)

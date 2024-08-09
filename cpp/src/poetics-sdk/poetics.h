@@ -6,7 +6,7 @@
 
 #include <fmt/core.h>
 
-#include "../header/streaming/streaming_client.h"
+#include "streaming/streaming_client.h"
 
 #ifdef _WIN32
 #ifdef POETICS_H_EXPORTS

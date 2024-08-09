@@ -1,4 +1,4 @@
-#include "../header/streaming/streaming_client.h"
+#include "streaming_client.h"
 
 namespace poetics::streaming {
     StreamingClient::StreamingClient(StreamingClientOptions options)

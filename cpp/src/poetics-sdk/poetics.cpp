@@ -1,5 +1,5 @@
 #define POETICS_H_EXPORTS
-#include "../include/poetics.h"
+#include "poetics.h"
 
 int hello()
 {
