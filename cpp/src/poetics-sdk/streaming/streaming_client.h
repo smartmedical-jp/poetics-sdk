@@ -6,7 +6,7 @@ using std::string;
 
 #include <fmt/core.h>
 
-#include "asr_job/core/options.h"
+#include "asr_job/core/options.hpp"
 #include "asr_job/stream_asr_job.h"
 using poetics::streaming::asr_job::StreamAsrJob;
 using namespace poetics::streaming::asr_job::core;

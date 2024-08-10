@@ -12,9 +12,9 @@ using std::vector;
 using std::optional;
 
 #include "core/stream_asr_job_core.h"
-#include "core/options.h"
-#include "core/stream_asr_job_detail.h"
-#include "core/utterance.h"
+#include "core/options.hpp"
+#include "core/stream_asr_job_detail.hpp"
+#include "core/utterance.hpp"
 #include "../websocket_connection/websocket_connection.h"
 #include "../../poetics_error.h"
 using namespace poetics::streaming::asr_job::core;
@@ -25,9 +25,9 @@ namespace poetics::streaming::asr_job {
     {
     public:
         StreamAsrJob(){}; // TODO: Should be removed
-        StreamAsrJob(string url, int channelCount, std::function<void(unique_ptr<StreamAsrJobCore>)> init);
-        unique_ptr<StreamAsrJob> CreateStreamAsrJob(string url, CreateStreamAsrJobOptions options);
-        unique_ptr<StreamAsrJob> ConnectToStreamAsrJob(string url, ConnectToStreamAsrJobOptions options);
+        StreamAsrJob(string url, int channelCount, std::function<void(unique_ptr<StreamAsrJobCore<T>>)> init);
+        unique_ptr<StreamAsrJob<T>> CreateStreamAsrJob(string url, CreateStreamAsrJobOptions options);
+        unique_ptr<StreamAsrJob<T>> ConnectToStreamAsrJob(string url, ConnectToStreamAsrJobOptions options);
     private:
         poetics::streaming::websocket_connection::WebsocketConnection<T> conn;
         //StreamAsrJobCore core

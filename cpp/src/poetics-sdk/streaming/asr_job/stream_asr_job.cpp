@@ -1,47 +1,58 @@
 #include "stream_asr_job.h"
 
 namespace poetics::streaming::asr_job {
-    StreamAsrJob::StreamAsrJob(string url, int channelCount, std::function<void(unique_ptr<StreamAsrJobCore>)> init)
+    template <typename T>
+    StreamAsrJob<T>::StreamAsrJob(string url, int channelCount, std::function<void(unique_ptr<StreamAsrJobCore<T>>)> init)
     {
-    }
-    unique_ptr<StreamAsrJob> StreamAsrJob::CreateStreamAsrJob(string url, CreateStreamAsrJobOptions options)
-    {
-        return unique_ptr<StreamAsrJob>();
     }
 
-    unique_ptr<StreamAsrJob> StreamAsrJob::ConnectToStreamAsrJob(string url, ConnectToStreamAsrJobOptions options)
+    template <typename T>
+    unique_ptr<StreamAsrJob<T>> StreamAsrJob<T>::CreateStreamAsrJob(string url, CreateStreamAsrJobOptions options)
     {
-        return unique_ptr<StreamAsrJob>();
+        return unique_ptr<StreamAsrJob<T>>();
     }
 
-    Error StreamAsrJob::processMessage(string msgStr)
+    template <typename T>
+    unique_ptr<StreamAsrJob<T>> StreamAsrJob<T>::ConnectToStreamAsrJob(string url, ConnectToStreamAsrJobOptions options)
+    {
+        return unique_ptr<StreamAsrJob<T>>();
+    }
+
+    template <typename T>
+    Error StreamAsrJob<T>::processMessage(string msgStr)
     {
         return Error("not implemented");
     }
 
-    void StreamAsrJob::run()
+    template <typename T>
+    void StreamAsrJob<T>::run()
     {
     }
 
-    void StreamAsrJob::subscribeUtterance()
+    template <typename T>
+    void StreamAsrJob<T>::subscribeUtterance()
     {
     }
     
-    Error StreamAsrJob::enqueueAudioData(int channelIndex, vector<uint8_t> audioData)
+    template <typename T>
+    Error StreamAsrJob<T>::enqueueAudioData(int channelIndex, vector<uint8_t> audioData)
     {
         return Error("not implemented");
     }
 
-    void StreamAsrJob::finishEnqueuingAudioData()
+    template <typename T>
+    void StreamAsrJob<T>::finishEnqueuingAudioData()
     {
     }
 
-    optional<StreamAsrJobDetail> StreamAsrJob::jobDetail()
+    template <typename T>
+    optional<StreamAsrJobDetail> StreamAsrJob<T>::jobDetail()
     {
         return std::nullopt;
     }
 
-    Error StreamAsrJob::Err()
+    template <typename T>
+    Error StreamAsrJob<T>::Err()
     {
         return Error("not implemented");
     }

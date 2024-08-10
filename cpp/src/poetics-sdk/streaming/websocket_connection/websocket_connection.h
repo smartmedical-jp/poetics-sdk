@@ -13,7 +13,7 @@ namespace poetics::streaming::websocket_connection {
     class IWebsocketConnection
     {
     public:
-        virtual ~IWebsocketConnection();
+        virtual ~IWebsocketConnection() = default;
         virtual void SetOnReconnect(std::function<void(void)> onReconnect) = 0;
         
         virtual void Send(T message) = 0;
