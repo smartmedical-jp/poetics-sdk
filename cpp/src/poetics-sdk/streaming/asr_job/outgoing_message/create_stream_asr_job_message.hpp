@@ -6,18 +6,13 @@ using std::string;
 #include <vector>
 
 namespace poetics::streaming::asr_job::outgoing_message {
-    class CreateStreamAsrJobMessageBodyChannel;
-    class CreateStreamAsrJobMessageBody;
-
-    class CreateStreamAsrJobMessage {
+    class CreateStreamAsrJobMessageBodyChannel {
     public:
-        CreateStreamAsrJobMessage(string command, CreateStreamAsrJobMessageBody body) : _command(command), _body(body) {}
+        CreateStreamAsrJobMessageBodyChannel(string participantName) : _participantName(participantName) {}
 
-        string getCommand() { return _command; }
-        CreateStreamAsrJobMessageBody getBody() { return _body; }
+        string getParticipantName() { return _participantName; }
     private:
-        string _command;
-        CreateStreamAsrJobMessageBody _body;
+        string _participantName;
     };
 
     class CreateStreamAsrJobMessageBody {
@@ -42,13 +37,15 @@ namespace poetics::streaming::asr_job::outgoing_message {
         std::vector<CreateStreamAsrJobMessageBodyChannel> _channels;
     };
 
-    class CreateStreamAsrJobMessageBodyChannel {
+    class CreateStreamAsrJobMessage {
     public:
-        CreateStreamAsrJobMessageBodyChannel(string participantName) : _participantName(participantName) {}
+        CreateStreamAsrJobMessage(string command, CreateStreamAsrJobMessageBody body) : _command(command), _body(body) {}
 
-        string getParticipantName() { return _participantName; }
+        string getCommand() { return _command; }
+        CreateStreamAsrJobMessageBody getBody() { return _body; }
     private:
-        string _participantName;
+        string _command;
+        CreateStreamAsrJobMessageBody _body;
     };
 }
 

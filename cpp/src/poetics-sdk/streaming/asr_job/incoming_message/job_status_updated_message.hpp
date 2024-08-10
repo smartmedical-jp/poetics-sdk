@@ -5,7 +5,14 @@
 using std::string;
 
 namespace poetics::streaming::asr_job::incoming_message {
-    class JobStatusUpdatedMessageBody;
+    class JobStatusUpdatedMessageBody {
+    public:
+        JobStatusUpdatedMessageBody(string status) : _status(status) {}
+
+        string getStatus() { return _status; }
+    private:
+        string _status;
+    };
 
     class JobStatusUpdatedMessage {
     public:
@@ -16,15 +23,6 @@ namespace poetics::streaming::asr_job::incoming_message {
     private:
         string _message;
         JobStatusUpdatedMessageBody _body;
-    };
-
-    class JobStatusUpdatedMessageBody {
-    public:
-        JobStatusUpdatedMessageBody(string status) : _status(status) {}
-
-        string getStatus() { return _status; }
-    private:
-        string _status;
     };
 }
 

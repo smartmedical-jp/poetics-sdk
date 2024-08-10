@@ -5,19 +5,6 @@
 using std::string;
 
 namespace poetics::streaming::asr_job::incoming_message {
-    class JobDetailMessageBody;
-
-    class JobDetailMessage {
-    public:
-        JobDetailMessage(string message, JobDetailMessageBody body) : _message(message), _body(body) {}
-
-        string getJobDetail() { return _message; }
-        JobDetailMessageBody getBody() { return _body; }
-    private:
-        string _message;
-        JobDetailMessageBody _body;
-    };
-
     class JobDetailMessageBody {
     public:
         JobDetailMessageBody(string streamAsrJobID, string conversationID, 
@@ -50,6 +37,17 @@ namespace poetics::streaming::asr_job::incoming_message {
         string _status;
         int _channelCount;
         string _createdAt; // Should be replaced with <chrono>?
+    };
+
+    class JobDetailMessage {
+    public:
+        JobDetailMessage(string message, JobDetailMessageBody body) : _message(message), _body(body) {}
+
+        string getJobDetail() { return _message; }
+        JobDetailMessageBody getBody() { return _body; }
+    private:
+        string _message;
+        JobDetailMessageBody _body;
     };
 }
 

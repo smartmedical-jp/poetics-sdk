@@ -6,18 +6,13 @@ using std::string;
 #include <vector>
 
 namespace poetics::streaming::asr_job::incoming_message {
-    class AudioFragmentSubmissionProgressMessageBodyChannel;
-    class AudioFragmentSubmissionProgressMessageBody;
-
-    class AudioFragmentSubmissionProgressMessage {
+    class AudioFragmentSubmissionProgressMessageBodyChannel {
     public:
-        AudioFragmentSubmissionProgressMessage(string message, AudioFragmentSubmissionProgressMessageBody body) : _message(message), _body(body) {}
-
-        string getMessage() { return _message; }
-        AudioFragmentSubmissionProgressMessageBody getBody() { return _body; }
+        AudioFragmentSubmissionProgressMessageBodyChannel(int channelIndex, int audioFragmentCount) : 
+            _channelIndex(channelIndex), _audioFragmentCount(audioFragmentCount) {}
     private:
-        string _message;
-        AudioFragmentSubmissionProgressMessageBody _body;
+        int _channelIndex;
+        int _audioFragmentCount;
     };
 
     class AudioFragmentSubmissionProgressMessageBody {
@@ -29,13 +24,15 @@ namespace poetics::streaming::asr_job::incoming_message {
         std::vector<AudioFragmentSubmissionProgressMessageBodyChannel> _channels;
     };
 
-    class AudioFragmentSubmissionProgressMessageBodyChannel {
+    class AudioFragmentSubmissionProgressMessage {
     public:
-        AudioFragmentSubmissionProgressMessageBodyChannel(int channelIndex, int audioFragmentCount) : 
-            _channelIndex(channelIndex), _audioFragmentCount(audioFragmentCount) {}
+        AudioFragmentSubmissionProgressMessage(string message, AudioFragmentSubmissionProgressMessageBody body) : _message(message), _body(body) {}
+
+        string getMessage() { return _message; }
+        AudioFragmentSubmissionProgressMessageBody getBody() { return _body; }
     private:
-        int _channelIndex;
-        int _audioFragmentCount;
+        string _message;
+        AudioFragmentSubmissionProgressMessageBody _body;
     };
 }
 

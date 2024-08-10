@@ -5,19 +5,6 @@
 using std::string;
 
 namespace poetics::streaming::asr_job::incoming_message {
-    class UtteranceMessageBody;
-
-    class UtteranceMessage {
-    public:
-        UtteranceMessage(string message, UtteranceMessageBody body) : _message(message), _body(body) {}
-
-        string getMessage() { return _message; }
-        UtteranceMessageBody getBody() { return _body; }
-    private:
-        string _message;
-        UtteranceMessageBody _body;
-    };
-
     class UtteranceMessageBody {
     public:
         UtteranceMessageBody(int channelIndex, int utteranceID, string startAt, string endAt, string text) : 
@@ -34,6 +21,17 @@ namespace poetics::streaming::asr_job::incoming_message {
         string _startAt; // Should be replaced to <chrono>?
         string _endAt; // Should be replaced to <chrono>?
         string _text;
+    };
+
+    class UtteranceMessage {
+    public:
+        UtteranceMessage(string message, UtteranceMessageBody body) : _message(message), _body(body) {}
+
+        string getMessage() { return _message; }
+        UtteranceMessageBody getBody() { return _body; }
+    private:
+        string _message;
+        UtteranceMessageBody _body;
     };
 }
 
