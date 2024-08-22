@@ -5,7 +5,7 @@
 #include <vector>
 #include <utility>
 
-#include "../../audio_buffer/audio_buffer.h"
+#include "../../audio_buffer/audio_buffer.hpp"
 using poetics::streaming::audio_buffer::AudioBuffer;
 #include "stream_asr_job_detail.hpp"
 #include "utterance.hpp"
