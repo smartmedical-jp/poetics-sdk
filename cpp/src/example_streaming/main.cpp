@@ -7,11 +7,22 @@ using std::string;
 #include "poetics/poetics-sdk.h"
 
 // main function!
-int main()
+int main(int argc, char* argv[])
 {
-    string path = "C:\\REPO\\poetics-sdk-cpp\\lib\\x64\\Debug\\poetics-sdk.dll";
+    string path;
+    if (argc == 2) {
+        path = argv[1];
+    } else if (argc == 1) {
+        path = "poetics-sdk.dll";
+    }
     auto sdk = new Poetics::SpeechAPI(path);
+    if (!sdk->isLibraryLoaded()) {
+        fmt::print("Failed to load library\n");
+        return -1;
+    }
+    
     fmt::print("The Hello() returned {}\n", sdk->Hello());
+    fmt::print("TestAudioBuffer returned {}\n", sdk->TestAudioBuffer());
     
     delete sdk;
     sdk = nullptr;

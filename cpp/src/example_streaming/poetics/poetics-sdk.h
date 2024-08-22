@@ -12,15 +12,18 @@ using std::string;
 namespace Poetics
 {
     typedef int (*fHello)(void);
+    typedef int (*fTestAudioBuffer)(void);
 
     class SpeechAPI
     {
     public:
         fHello Hello;
+        fTestAudioBuffer TestAudioBuffer;
+        bool isLibraryLoaded() { return _libraryLoaded; }
 
         SpeechAPI(string libraryPath)
         {   // "C:\\REPO\\poetics-sdk-cpp\\lib\\x64\\Debug\\poetics-sdk.dll"
-            init(libraryPath);
+            _libraryLoaded = init(libraryPath);
         }
 
         ~SpeechAPI()
@@ -30,21 +33,32 @@ namespace Poetics
     private:
         HMODULE _hDLL;
         string _libraryPath = "";
+        bool _libraryLoaded = false;
         
         SpeechAPI() {};
         bool init(string libraryPath)
         {
             bool result = false;
             
+            _libraryPath = libraryPath;
             _hDLL = LoadLibraryA(libraryPath.c_str());
             if (_hDLL != NULL)
             {
                 Hello = (fHello)GetProcAddress(_hDLL, "hello");
+                TestAudioBuffer = (fTestAudioBuffer)GetProcAddress(_hDLL, "test_audio_buffer");
 
-                _libraryPath = libraryPath;
-                result = true;
+                result = testInterfaces();
             }
             return result;
+        }
+
+        bool testInterfaces()
+        {
+            if (Hello == NULL || TestAudioBuffer == NULL)
+            {
+                return false;
+            }
+            return true;
         }
     };
 }
