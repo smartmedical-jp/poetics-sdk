@@ -3,8 +3,14 @@
 
 #include <random>
 #include <chrono>
+#include <iostream>
+using std::cout;
+using std::endl;
 
 #include <fmt/core.h>
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 #include "streaming/streaming_client.h"
 
@@ -24,5 +30,6 @@
 
 extern "C" POETICS_H_API int hello();
 extern "C" POETICS_H_API int test_audio_buffer();
+extern "C" POETICS_H_API int test_outgoing_message();
 
 #endif

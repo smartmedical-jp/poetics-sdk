@@ -23,6 +23,7 @@ int main(int argc, char* argv[])
     
     fmt::print("The Hello() returned {}\n", sdk->Hello());
     fmt::print("TestAudioBuffer returned {}\n", sdk->TestAudioBuffer());
+    fmt::print("TestOutgoingMessage returned {}\n", sdk->TestOutgoingMessage());
     
     delete sdk;
     sdk = nullptr;

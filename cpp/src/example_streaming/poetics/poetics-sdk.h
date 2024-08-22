@@ -13,12 +13,14 @@ namespace Poetics
 {
     typedef int (*fHello)(void);
     typedef int (*fTestAudioBuffer)(void);
+    typedef int (*fTestOutgoingMessage)(void);
 
     class SpeechAPI
     {
     public:
         fHello Hello;
         fTestAudioBuffer TestAudioBuffer;
+        fTestOutgoingMessage TestOutgoingMessage;
         bool isLibraryLoaded() { return _libraryLoaded; }
 
         SpeechAPI(string libraryPath)
@@ -46,6 +48,7 @@ namespace Poetics
             {
                 Hello = (fHello)GetProcAddress(_hDLL, "hello");
                 TestAudioBuffer = (fTestAudioBuffer)GetProcAddress(_hDLL, "test_audio_buffer");
+                TestOutgoingMessage = (fTestOutgoingMessage)GetProcAddress(_hDLL, "test_outgoing_message");
 
                 result = testInterfaces();
             }
@@ -54,7 +57,7 @@ namespace Poetics
 
         bool testInterfaces()
         {
-            if (Hello == NULL || TestAudioBuffer == NULL)
+            if (Hello == NULL || TestAudioBuffer == NULL || TestOutgoingMessage == NULL)
             {
                 return false;
             }
