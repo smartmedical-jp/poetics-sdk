@@ -1,0 +1,8 @@
+{
+    "cmake.debugConfig": {
+        "args": [
+            "C:\\REPO\\poetics-sdk\\cpp\\lib\\x64\\Debug\\poetics-sdk.dll"
+        ]
+    },
+    "C_Cpp.autoAddFileAssociations": false
+}
