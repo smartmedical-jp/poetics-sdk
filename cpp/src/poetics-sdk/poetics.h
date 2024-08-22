@@ -23,5 +23,6 @@
 #endif
 
 extern "C" POETICS_H_API int hello();
+extern "C" POETICS_H_API int test_audio_buffer();
 
 #endif
