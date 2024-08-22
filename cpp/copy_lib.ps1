@@ -36,6 +36,7 @@ if (-not (Test-Path -Path $dst_dir)) {
 }
 else {
     Remove-Item -Path $dst_dir -Recurse -Force
+    [void](New-Item -Path $dst_dir -ItemType Directory)
 }
 
 # Get list of every file in $src_dir
