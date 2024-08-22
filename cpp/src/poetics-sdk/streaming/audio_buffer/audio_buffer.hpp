@@ -11,6 +11,7 @@ using std::unique_ptr;
 #include "../../poetics_error.h"
 
 #define DEFAULT_BYTE_SIZE 16000
+#define DISCARD_THRESHOLD_FRAGMENTS 10
 
 namespace poetics::streaming::audio_buffer {
     class IAudioBuffer {
@@ -46,7 +47,7 @@ namespace poetics::streaming::audio_buffer {
         }
 
         std::pair<std::vector<char> *, poetics::Error> GetFragmentAt(int fragmentIndex, bool isRecordingFinished) override {
-            mutex.lock();
+            std::lock_guard<std::mutex> lock(mutex);
 
             std::vector<char> * fragment;
             if (fragmentIndex < _fromFragmentIndex) {
@@ -59,22 +60,23 @@ namespace poetics::streaming::audio_buffer {
 
             fragment = _bytes->at(fragmentIndex);
 
-            mutex.unlock();
             return std::pair<std::vector<char> *, poetics::Error>(fragment, poetics::Error());
         }
         
         void ReleaseAudioDataBefore(int fragmentIndex) override {
-            mutex.lock();
-            while (_bytes->size() > 0 && _bytes->front()->size() == 0) {
-                delete _bytes->front();
-                _bytes->pop_front();
+            _discardableFragmentIndex = fragmentIndex;
+
+            // Wait until _discardableFragmentIndex gets larger than fragmentIndex
+            if (_discardableFragmentIndex - _fromFragmentIndex > DISCARD_THRESHOLD_FRAGMENTS) {
+                // Leave the fragment, just remove the elements inside it
+                std::lock_guard<std::mutex> lock(mutex);
+                for (int i = _fromFragmentIndex; i < _discardableFragmentIndex; i++) {
+                    auto fragment = _bytes->at(i);
+                    fragment->clear();
+                }
+
+                _fromFragmentIndex = fragmentIndex;
             }
-            while (_bytes->size() > fragmentIndex) {
-                delete _bytes->front();
-                _bytes->pop_front();
-            }
-            _fromFragmentIndex = fragmentIndex;
-            mutex.unlock();
         }
 
         std::deque<std::vector<char> *> * GetBytes() { return _bytes.get(); }

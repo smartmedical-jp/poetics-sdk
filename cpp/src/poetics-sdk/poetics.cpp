@@ -20,13 +20,19 @@ int test_audio_buffer()
         data[i] = i % 10;
     }
 
-    audioBuffer->AppendAudioData(data, byteSize);
-    audioBuffer->AppendAudioData(data, byteSize);
+    const int RANGE = 25;
+    for (int j = 0; j < RANGE; j++) {
+        audioBuffer->AppendAudioData(data, byteSize);
+    }
 
-    auto fragment1 = audioBuffer->GetFragmentAt(0, false);
-    auto fragment2 = audioBuffer->GetFragmentAt(1, true);
-
-    audioBuffer->ReleaseAudioDataBefore(1);
+    for (int i = 0; i < RANGE; i++) {
+        auto fragment = audioBuffer->GetFragmentAt(i, i == (RANGE - 1) ? true :false);
+        fmt::print("fragment size: {}\n", fragment.first->size());
+        audioBuffer->ReleaseAudioDataBefore(i);
+    }
+    
+    auto fragment = audioBuffer->GetFragmentAt(12, false);  // fragment index is already released
+    auto fragment2 = audioBuffer->GetFragmentAt(24, false);  // fragment index is not released yet
 
     return 1;
 }
