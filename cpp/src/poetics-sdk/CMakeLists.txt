@@ -4,9 +4,11 @@ add_library(poetics-sdk SHARED poetics.cpp)
 
 find_package(Poco REQUIRED COMPONENTS Foundation Net)
 find_package(fmt CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(poetics-sdk PRIVATE fmt::fmt-header-only)
 
 target_link_libraries(poetics-sdk PRIVATE Poco::Foundation Poco::Net)
+target_link_libraries(poetics-sdk PRIVATE nlohmann_json::nlohmann_json)
 
 set_property(TARGET poetics-sdk PROPERTY CXX_STANDARD 20)
 
