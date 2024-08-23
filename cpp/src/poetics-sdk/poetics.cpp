@@ -49,7 +49,7 @@ int test_outgoing_message()
         {CreateStreamAsrJobMessageBodyChannel("speaker_0"), 
         CreateStreamAsrJobMessageBodyChannel("speaker_1")}
     );
-    CreateStreamAsrJobMessage message("command", body);
+    CreateStreamAsrJobMessage message("create_stream_asr_job", body);
 
     json j = message;
     std::cout << j.dump(4) << std::endl;
