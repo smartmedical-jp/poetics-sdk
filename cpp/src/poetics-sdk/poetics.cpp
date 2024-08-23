@@ -57,3 +57,20 @@ int test_outgoing_message()
     fmt::println("<-test_outgoing_message()");
     return 1;
 }
+
+int test_incoming_message()
+{
+    fmt::println("->test_incoming_message()");
+
+    fmt::println("JobDetail()");
+    string jobDetailString = R"({"body":{"audio_encoding":"s16le","audio_sample_rate":8000,"channel_count":1,"conversation_id":"abcdefgh-1fb5-4de3-b162-123456789012","created_at":"2024-08-22T07:08:46.910Z","is_data_logging_enabled":true,"status":"open","stream_asr_job_id":"abcdefgh-21ab-4d8b-8fac-123456789012"},"message":"job_detail"})";
+
+    auto j = json::parse(jobDetailString);
+    JobDetailMessage jobDetailMessage;
+    from_json(j, jobDetailMessage);
+
+    fmt::println("Successfully create jobDetailMessage from {}", j.dump());
+
+    fmt::println("<-test_incoming_message()");
+    return 1;
+}

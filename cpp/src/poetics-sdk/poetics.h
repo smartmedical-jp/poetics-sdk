@@ -31,5 +31,6 @@ using json = nlohmann::json;
 extern "C" POETICS_H_API int hello();
 extern "C" POETICS_H_API int test_audio_buffer();
 extern "C" POETICS_H_API int test_outgoing_message();
+extern "C" POETICS_H_API int test_incoming_message();
 
 #endif
