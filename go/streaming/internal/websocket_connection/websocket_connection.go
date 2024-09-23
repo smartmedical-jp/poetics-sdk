@@ -171,14 +171,14 @@ func (c *WebsocketConnection) sendLoop() {
 		if err := c.conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
 			time.Sleep(500 * time.Millisecond)
 			c.mutex.Unlock()
-			select {
-			case c.logChan <- WebsocketMessageLog{Direction: "outgoing", Message: message, Time: time.Now()}:
-			default:
-			}
 			continue
 		}
 
 		c.messageBuffer = c.messageBuffer[1:]
+		select {
+		case c.logChan <- WebsocketMessageLog{Direction: "outgoing", Message: message, Time: time.Now()}:
+		default:
+		}
 		c.mutex.Unlock()
 	}
 }
