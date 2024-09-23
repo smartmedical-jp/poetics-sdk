@@ -9,5 +9,12 @@
 		},
 		"ghcr.io/devcontainers/features/go:1": {},
 	},
-	"postCreateCommand": "sh .devcontainer/postCreate.sh"
+	"postCreateCommand": "sh .devcontainer/postCreate.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mhutchie.git-graph", // GitGraph
+			]
+		}
+	}
 }
