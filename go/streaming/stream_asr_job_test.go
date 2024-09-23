@@ -78,6 +78,11 @@ func Test_StreamAsrJob(t *testing.T) {
 	if detail.Status != "completed" {
 		t.Errorf("unexpected job status: %s", detail.Status)
 	}
+
+	// ログの取得ができることを確認
+	if len(job.SubscribeWebsocketMessageLog()) == 0 {
+		t.Errorf("no websocket message log")
+	}
 }
 
 func Test_StreamAsrJob_Stereo(t *testing.T) {

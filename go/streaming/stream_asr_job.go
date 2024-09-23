@@ -146,6 +146,10 @@ func (j *StreamAsrJob) SubscribeUtterance() <-chan Utterance {
 	return j.utteranceChan
 }
 
+func (j *StreamAsrJob) SubscribeWebsocketMessageLog() <-chan websocket_connection.WebsocketMessageLog {
+	return j.conn.SubscribeMessageLog()
+}
+
 func (j *StreamAsrJob) EnqueueAudioData(channelIndex int, audioData []byte) error {
 	return j.core.EnqueueAudioData(channelIndex, audioData)
 }

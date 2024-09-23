@@ -21,6 +21,13 @@ type WebsocketConnection struct {
 	onReconnect                func()
 	isClosed                   bool
 	lastReconnectError         error
+	logChan                    chan WebsocketMessageLog
+}
+
+type WebsocketMessageLog struct {
+	Direction string
+	Message   string
+	Time      time.Time
 }
 
 var _ WebsocketConnectionInterface = &WebsocketConnection{}
@@ -37,6 +44,8 @@ func NewWebsocketConnection(url string) (*WebsocketConnection, error) {
 		remainingReconnectAttempts: 10,
 		onReconnect:                func() {},
 		isClosed:                   false,
+		lastReconnectError:         nil,
+		logChan:                    make(chan WebsocketMessageLog, 100),
 	}
 
 	if err := c.connect(); err != nil {
@@ -80,6 +89,7 @@ func (c *WebsocketConnection) Close() {
 		close(c.receiveChan)
 		close(c.errorChan)
 		close(c.doneChan)
+		close(c.logChan)
 	}
 	c.mutex.Unlock()
 }
@@ -94,6 +104,10 @@ func (c *WebsocketConnection) SubscribeError() chan error {
 
 func (c *WebsocketConnection) SubscribeDone() chan struct{} {
 	return c.doneChan
+}
+
+func (c *WebsocketConnection) SubscribeMessageLog() chan WebsocketMessageLog {
+	return c.logChan
 }
 
 func (c *WebsocketConnection) pingLoop() {
@@ -129,6 +143,10 @@ func (c *WebsocketConnection) receiveLoop() {
 		if !c.isClosed {
 			logging.Logger.Debug("RCV", "message", string(message))
 			c.receiveChan <- string(message)
+			select {
+			case c.logChan <- WebsocketMessageLog{Direction: "incoming", Message: string(message), Time: time.Now()}:
+			default:
+			}
 		}
 	}
 }
@@ -153,6 +171,10 @@ func (c *WebsocketConnection) sendLoop() {
 		if err := c.conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
 			time.Sleep(500 * time.Millisecond)
 			c.mutex.Unlock()
+			select {
+			case c.logChan <- WebsocketMessageLog{Direction: "outgoing", Message: message, Time: time.Now()}:
+			default:
+			}
 			continue
 		}
 

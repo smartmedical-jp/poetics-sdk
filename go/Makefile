@@ -2,7 +2,7 @@ init:
 	go mod tidy
 
 codegen:
-	go install github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@latest
+	go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
 	oapi-codegen --generate client,types --package rest ../rest.spec.json  > rest/rest_client.gen.go
 
 test:
