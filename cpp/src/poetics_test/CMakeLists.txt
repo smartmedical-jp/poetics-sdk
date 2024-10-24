@@ -1,6 +1,7 @@
 project(poetics_test)
 
 add_executable(poetics_test test.cpp)
+set(EXECUTABLE_OUTPUT_PATH ${POETICS_OUT_PATH})
 
 # target_sources(tests PRIVATE test.cpp)
 find_package(fmt CONFIG REQUIRED)

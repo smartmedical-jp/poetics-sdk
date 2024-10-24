@@ -17,7 +17,7 @@ using std::ifstream;
 
 #include <cstdlib>
 
-#include "poetics_sdk/include/streaming_client.h"
+#include "streaming_client.h"
 
 #ifdef WIN32
 #define POETICS_SETENV _putenv_s

@@ -6,7 +6,10 @@ message("CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
 message("CMAKE_HOME_DIRECTORY=${CMAKE_HOME_DIRECTORY}")
 message("CMAKE_CONFIGURATION_TYPES=${CMAKE_CONFIGURATION_TYPES}")
 
+SET(POETICS_OUT_PATH ${CMAKE_HOME_DIRECTORY}/out)
+
 # main target
+add_subdirectory(src/poetics_sdk)
 add_subdirectory(src/poetics_standalone)
 
 enable_testing()
