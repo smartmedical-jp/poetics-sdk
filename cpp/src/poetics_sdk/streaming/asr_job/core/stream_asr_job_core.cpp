@@ -138,11 +138,14 @@ namespace poetics::streaming::asr_job::core {
             // (4KB for the other data fields, 1kB = 1000B)
             onErrorReceived("Raw data size should not be greater than 21kB");
             return false;
+        } else if (dataSize <= 0) {
+            onErrorReceived("Raw data size should be greater than 0");
+            return false;
         }
 
         onDebugMessageReceived(fmt::format("Enqueuing data for channel index {}, audio fragment index {}", channelIndex, audioFragmentIndex));
 
-        auto channelAudioBuffer = _audioBuffers->at(channelIndex);
+        auto channelAudioBuffer = (*_audioBuffers)[channelIndex];
         channelAudioBuffer->AppendAudioData(audioFragmentIndex, data, dataSize);
 
         return true;
@@ -162,6 +165,7 @@ namespace poetics::streaming::asr_job::core {
         do {
             allAudioDataSent.store(true, std::memory_order_release);
             if (_exit.load(std::memory_order_acquire)) {
+                // This can be true when the server closes the connection before all audio data is sent
                 break;
             }
             for (int i = 0; i < _channelCount; i++) {
@@ -318,7 +322,7 @@ namespace poetics::streaming::asr_job::core {
         auto audioFragmentCount = audioFragment.value().second;
         auto lastAudioFragmentCount = (*_lastAudioFragmentIndices)[channelIndex];
         bool isRecordingFinished = audioFragmentCount == lastAudioFragmentCount;
-        fmt::println("lastAudioFragmentCount = {}, audioFragmentCount = {}", lastAudioFragmentCount, audioFragmentCount);
+        // fmt::println("lastAudioFragmentCount = {}, audioFragmentCount = {}", lastAudioFragmentCount, audioFragmentCount);
         if (lastAudioFragmentCount > -1 && lastAudioFragmentCount < audioFragmentCount) {
             // Audio fragment count is out of order. In general case, this means that every audio fragment has been sent.
             _audioDataQueue->pop();
