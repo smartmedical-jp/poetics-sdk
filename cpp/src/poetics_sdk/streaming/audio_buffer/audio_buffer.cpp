@@ -13,16 +13,13 @@ namespace poetics::streaming::audio_buffer {
     void AudioBuffer::AppendAudioData(int fragmentIndex, const char* data, size_t data_size) {
         std::lock_guard<std::mutex> lock(mutex);
         auto fragment = new std::vector<char>;
-        fragment->reserve(_bytesPerFragment);
-        if (data_size > 0)
-        {
-            std::copy(data, data + data_size, std::back_inserter(*fragment));
-        }
+        fragment->reserve(data_size);
+        std::copy(data, data + data_size, std::back_inserter(*fragment));
         _fragments->push_back(audio_buffer_t(fragmentIndex, fragment));
     }
 
     shared_ptr<vector<char>> AudioBuffer::GetFragmentAt(int fragmentIndex, bool isRecordingFinished) {
-        std::lock_guard<std::mutex> lock(mutex);
+        // std::lock_guard<std::mutex> lock(mutex);
 
         auto container = *_fragments;
         // Temporary optimization until you don't use ReleaseFragmentAt().
