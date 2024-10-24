@@ -191,7 +191,6 @@ namespace poetics::streaming::asr_job::core {
             }
         }
         while (!allAudioDataSent.load(std::memory_order_acquire));
-        cout << "allAudioDataSent: " << allAudioDataSent << endl;
         _requestThread->request_stop();
 
         auto jsonMessage = _generateCloseStreamAsrJobMessage();
