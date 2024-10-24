@@ -1,0 +1,21 @@
+{
+  "name": "main",
+  "version-string": "latest",
+  "dependencies": [
+    "fmt",
+    {
+      "name": "poco",
+      "features": [
+        "netssl"
+      ]
+    },
+    "nlohmann-json"
+  ],
+  "builtin-baseline": "1de2026f28ead93ff1773e6e680387643e914ea1",
+  "overrides": [
+    {
+      "name": "poco",
+      "version": "1.13.2"
+    }
+  ]
+}
