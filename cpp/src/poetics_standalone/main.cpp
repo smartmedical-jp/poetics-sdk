@@ -39,8 +39,6 @@ int main()
         return 1;
     }
 
-    return 0;
-
     poetics::streaming::StreamingClient streamingClient(endpoint, apiKey);
     vector<string> channels = { "channel1" };
     unique_ptr<StreamAsrJob> asrJob = streamingClient.createStreamAsrJob("s16le", 8000, 1, true, "test", channels);
