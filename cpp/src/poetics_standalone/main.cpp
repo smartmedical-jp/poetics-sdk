@@ -74,7 +74,7 @@ int main()
 
                 audioFile.read(buffer, recordingBufferSize);
 
-                cout << "Current index: " << index << endl;
+                cout << "Current index of the audio data: " << index << endl;
                 if (audioFile) {
                     auto result = asrJob->enqueueAudioData(CHANNEL, index, buffer, recordingBufferSize);
                     if (!result) {
