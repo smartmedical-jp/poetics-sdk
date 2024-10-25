@@ -22,16 +22,16 @@ namespace poetics::streaming::audio_buffer {
         // std::lock_guard<std::mutex> lock(mutex);
 
         auto container = *_fragments;
-        // Temporary optimization until you don't use ReleaseFragmentAt().
+        // Temporary optimization, not available if we actually erase the fragment in the ReleaseFragmentUntil() function.
         if (container.size() > fragmentIndex) {
             if (container[fragmentIndex].first == fragmentIndex) {
                 return container[fragmentIndex].second;
             }
-        }
-
-        for (const auto& fragment : container) {
-            if (fragment.first == fragmentIndex) {
-                return fragment.second;
+        } else {
+            for (auto it = container.rbegin(); it != container.rend(); ++it) {
+                if (it->first == fragmentIndex) {
+                    return it->second;
+                }
             }
         }
 
