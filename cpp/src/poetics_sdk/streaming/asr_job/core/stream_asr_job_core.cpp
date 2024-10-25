@@ -77,10 +77,6 @@ namespace poetics::streaming::asr_job::core {
 
         try {
             _webSocket = std::make_unique<WebSocket>(*_session, *_request, *_response);
-            char buffer[1024] = {
-                0,
-            };
-
             string payload = _generateCreateStreamAsrJobMessage()->dump();
 
             _sendMessage(payload.c_str(), payload.size());
@@ -351,6 +347,12 @@ namespace poetics::streaming::asr_job::core {
             _sendMessage(jsonString.c_str(), jsonString.length());
 
             ((*_audioBufferStates)[channelIndex])[audioFragmentCount] = AudioBufferState::SENDING;
+
+            auto previousAudioFragmentCount = audioFragmentCount - 1;
+            if (previousAudioFragmentCount != 0 && (previousAudioFragmentCount % DISCARD_FRAGMENT_INTERVAL == 0)) {
+                cout << "Discarding audio fragment until " << previousAudioFragmentCount << endl;
+                audioBuffer->ReleaseFragmentUntil(previousAudioFragmentCount, DISCARD_FRAGMENT_INTERVAL);
+            }
         }
         else {
             onDebugMessageReceived(fmt::format("AudioBufferState is not ENQUEUED. AudioFragmentCount: {}", audioFragmentCount));

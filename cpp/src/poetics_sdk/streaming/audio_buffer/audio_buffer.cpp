@@ -38,21 +38,16 @@ namespace poetics::streaming::audio_buffer {
         return nullptr;
     }
     
-    void AudioBuffer::ReleaseFragmentAt(int fragmentIndex) {
-        std::lock_guard<std::mutex> lock(mutex);
-
-        // for (auto it = _fragments->begin(); it != _fragments->end(); it++) {
-        //     if (it->first == fragmentIndex) {
-        //         it->second->clear();
-        //         _fragments->erase(it);
-        //         break;
-        //     }
-        // }
-        
-        // Clear fragments until fragmentIndex
-        for (auto& fragment : *_fragments) {
-            if (fragment.first <= fragmentIndex) {
-                fragment.second->clear();
+    void AudioBuffer::ReleaseFragmentUntil(int fragmentIndex, unsigned int distance) {
+        // Clear fragments until fragmentIndex using reverse iterator
+        unsigned int count = 0;
+        for (auto it = _fragments->rbegin(); it != _fragments->rend(); it++) {
+            if (it->first <= fragmentIndex) {
+                it->second->clear();
+                count++;
+            }
+            if (count == distance) {
+                break;
             }
         }
     }

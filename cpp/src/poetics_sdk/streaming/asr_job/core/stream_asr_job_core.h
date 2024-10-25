@@ -102,6 +102,7 @@ namespace poetics::streaming::asr_job::core {
         shared_ptr<vector<int>> _lastAudioFragmentIndices;
         shared_ptr<vector<shared_ptr<AudioBuffer>>> _audioBuffers;
         shared_ptr<ThreadSafeQueue<std::pair<int, int>>> _audioDataQueue;
+        const int DISCARD_FRAGMENT_INTERVAL = 50;
         
         // channels<audioFragmentIndex, AudioBufferState>
         shared_ptr<vector<unordered_map<int, AudioBufferState>>> _audioBufferStates;

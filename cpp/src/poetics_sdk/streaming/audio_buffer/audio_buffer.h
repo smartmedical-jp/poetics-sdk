@@ -30,7 +30,7 @@ namespace poetics::streaming::audio_buffer {
 
         virtual void AppendAudioData(int fragmentIndex, const char* data, size_t data_size) = 0;
         virtual shared_ptr<vector<char>> GetFragmentAt(int fragmentIndex, bool isRecordingFinished) = 0;
-        virtual void ReleaseFragmentAt(int fragmentIndex) = 0;
+        virtual void ReleaseFragmentUntil(int fragmentIndex, unsigned int distance) = 0;
     };
 
     // Declaration of AudioBuffer
@@ -41,7 +41,7 @@ namespace poetics::streaming::audio_buffer {
 
         void AppendAudioData(int fragmentIndex, const char* data, size_t data_size) override;
         shared_ptr<vector<char>> GetFragmentAt(int fragmentIndex, bool isRecordingFinished) override;
-        void ReleaseFragmentAt(int fragmentIndex) override;
+        void ReleaseFragmentUntil(int fragmentIndex, unsigned int distance) override;
         deque<audio_buffer_t>* GetFragments();
     private:
         int _bytesPerFragment;
