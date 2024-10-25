@@ -1,7 +1,7 @@
 # CMakeLists.txt
 cmake_minimum_required(VERSION 3.15)
 if (WIN32)
-    cmake_policy(SET CMP0091 NEW)
+    cmake_policy(SET CMP0091 NEW) # https://github.com/microsoft/vcpkg/issues/18531#issuecomment-864597848
 endif (WIN32)
 project(poetics_sdk_cpp)
 
