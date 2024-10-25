@@ -99,7 +99,7 @@ The former config will build the libraries dependent to this SDK separately like
 
 ![Build result of Ninja Multi-Config](./img/ninja-multi-config.png)
 
-The latter config will merge the libraries dependent to this SDK (statically) like below, which
+The latter config will merge the libraries dependent to this SDK (statically) like below:
 
 ![Build result of Ninja Win64-Static](./img/ninja-win64-static.png)
 
