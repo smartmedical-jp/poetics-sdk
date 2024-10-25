@@ -1,5 +1,6 @@
 #ifndef STREAM_ASR_JOB_H
 #define STREAM_ASR_JOB_H
+#include "api_definition.h"
 
 #include <string>
 using std::string;
@@ -15,10 +16,8 @@ using std::endl;
 #include "stream_asr_job_listener.h"
 
 namespace poetics::streaming::asr_job {
-    class StreamAsrJob
+    class POETICS_API StreamAsrJob
     {
-    private:
-        shared_ptr<StreamAsrJobListener> _listener;
     public:
         virtual ~StreamAsrJob();
 
@@ -38,6 +37,8 @@ namespace poetics::streaming::asr_job {
         bool enqueueAudioData(int channelIndex, int audioFragmentIndex, const char* data, int dataSize);
         void setLastAudioFragmentIndex(int channelIndex, int audioFragmentIndex);
         void finishEnqueuingAudioData();
+    private:
+        shared_ptr<StreamAsrJobListener> _listener;
     protected:
         string _endpoint;
         string _apiKey;

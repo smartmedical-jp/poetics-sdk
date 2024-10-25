@@ -1,6 +1,8 @@
 #ifndef STREAMING_CLIENT_H
 #define STREAMING_CLIENT_H
 
+#include "api_definition.h"
+
 #include <string>
 using std::string;
 #include <vector>
@@ -11,12 +13,10 @@ using std::unique_ptr;
 #include "stream_asr_job.h"
 using poetics::streaming::asr_job::StreamAsrJob;
 
+
 namespace poetics::streaming {
-    class StreamingClient
+    class POETICS_API StreamingClient
     {
-    private:
-        string _endpoint;
-        string _apiKey;
     public:
         StreamingClient(string endpoint, string apiKey);
 
@@ -26,6 +26,9 @@ namespace poetics::streaming {
 
         // Used when you already have a streamAsrJobID and want to connect to it
         std::unique_ptr<StreamAsrJob> connectToStreamAsrJob(string streamAsrJobID, int channelCount);
+    private: 
+        string _endpoint;
+        string _apiKey;
     };
 }
 
