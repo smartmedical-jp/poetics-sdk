@@ -13,6 +13,18 @@
             "binaryDir": "${sourceDir}/builds/${presetName}",
             "generator": "Ninja Multi-Config",
             "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        },
+        {
+            "name": "ninja-win64-vcpkg-static",
+            "displayName": "Ninja Win64 (Static)",
+            "description": "Static Windows x64 build to release with single library file",
+            "binaryDir": "${sourceDir}/builds/${presetName}",
+            "generator": "Ninja Multi-Config",
+            "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded"
+            }
         }
     ],
     "buildPresets": [
@@ -25,7 +37,7 @@
         },
         {
             "name": "ninja-vcpkg-release",
-            "configurePreset": "ninja-multi-vcpkg",
+            "configurePreset": "ninja-win64-vcpkg-static",
             "displayName": "Build (Release)",
             "description": "Build with Ninja/vcpkg (Release)",
             "configuration": "Release"

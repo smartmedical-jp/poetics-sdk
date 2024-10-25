@@ -1,5 +1,8 @@
 # CMakeLists.txt
 cmake_minimum_required(VERSION 3.15)
+if (WIN32)
+    cmake_policy(SET CMP0091 NEW)
+endif (WIN32)
 project(poetics_sdk_cpp)
 
 message("CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
