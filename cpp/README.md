@@ -72,7 +72,7 @@ Now you can build and run the project! Keep in mind you should always open the p
 [cmake] CMake Error: CMAKE_CXX_COMPILER not set, after EnableLanguage
 ```
 
-In this case, you **should remove the `builds` directory** and run the VSCode by launching the `launch_devtools_x**.bat` mentioned above.
+In this case, you **should remove the `builds` directory** and run the VSCode again by launching the `launch_devtools_x**.bat` mentioned above.
 
 ## 5.2 Setting up VSCode Extensions
 
@@ -84,19 +84,24 @@ Go to extensions tab and install following extensions:
 - CMake Langugage Support
 - CMake Tools
 
-After you install the above extensions and select in the status bar the CMake preset (e.g. `ninja-multi-vcpkg`), as show in the following image:
+After you install the above extensions and select in the status bar the CMake configuration (e.g. `Ninja Multi-Config`), as show in the following image:
 
 ![CMake's preset selection in the status bar of Visual Studio Code](./img/vscode_cmakepresets_selection.png)
 
 # 6. Build, Debug, and Test
 
-Before build or debug, click the following button to choose the target:
+Currently there are two build configures:
 
-![CMake's project selection in the status bar of Visual Studio Code](./img/vscode_target_selection.png)
+* Ninja Multi-Config: Common build configure (use in Debug mode)
+* Ninja Win64 (Static): Windows-specific build to generate **single** library file (please **use in Release mode**).
 
-Then choose the target:
+The former config will build the libraries dependent to this SDK separately like below:
 
-![CMake's project selection in the status bar of Visual Studio Code (2)](./img/vscode_target_selection_2.png)
+![Build result of Ninja Multi-Config](./img/ninja-multi-config.png)
+
+The latter config will merge the libraries dependent to this SDK (statically) like below, which
+
+![Build result of Ninja Win64-Static](./img/ninja-win64-static.png)
 
 ## 6.1 How to build
 
@@ -118,9 +123,8 @@ Then choose the target:
 
 The major `C++` IDEs like Visual Studio should already support `CMakePresets.json` and require no particular configuration.
 
-For example [Visual Studio Code](https://code.visualstudio.com/) with the [CMake Tools extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools) let you to open the root folder of this repository, and select in the status bar the CMake preset (e.g. `ninja-multi-vcpkg`), as show in the following image:
+For example [Visual Studio Code](https://code.visualstudio.com/) with the [CMake Tools extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools) let you to open the root folder (`cpp`) of this repository, and select the default build target (ex: `all, poetics-sdk, poetics-standalone, ...`) or target to launch (ex: `poetics_standalone, poetics_test`), as shown in the following image:
 
 ![CMake's preset selection in the status bar of Visual Studio Code](./img/vscode_cmakepresets_selection.png)
 
 <br>
-
