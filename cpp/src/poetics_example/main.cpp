@@ -24,6 +24,7 @@ int main()
 {
     system("chcp 65001");
 
+
     const char* apiKey = getenv("POETICS_API_KEY");
     const char* endpoint = getenv("POETICS_STREAMING_API_ENDPOINT");
 
@@ -48,7 +49,7 @@ int main()
         cout << "Connected" << endl;
 
         string filePath = "C:\\REPO\\poetics-sdk\\testdata\\short_s16le_8k.wav";
-        //string filePath = "C:\\REPO\\poetics-sdk\\testdata\\long_s16le_8k.wav";
+        // string filePath = "C:\\REPO\\poetics-sdk\\testdata\\long_s16le_8k.wav";
         auto sampleRate = 8000;
         auto bytesPerSample = 2;
         double recordingBufferMilliseconds = 500.0;
@@ -68,8 +69,8 @@ int main()
             while (true)
             {
                 // Sleep for recordingBufferMilliseconds 
-                 //std::this_thread::sleep_for(std::chrono::milliseconds((int) recordingBufferMilliseconds));
-                 std::this_thread::sleep_for(std::chrono::milliseconds(((int) recordingBufferMilliseconds) - 100));
+                std::this_thread::sleep_for(std::chrono::milliseconds((int) recordingBufferMilliseconds));
+                // std::this_thread::sleep_for(std::chrono::milliseconds(((int) recordingBufferMilliseconds) - 100));
                 // std::this_thread::sleep_for(std::chrono::milliseconds(150));
 
                 audioFile.read(buffer, recordingBufferSize);

@@ -13,7 +13,7 @@ SET(POETICS_OUT_PATH ${CMAKE_HOME_DIRECTORY}/out)
 
 # main target
 add_subdirectory(src/poetics_sdk)
-add_subdirectory(src/poetics_standalone)
+add_subdirectory(src/poetics_example)
 
 enable_testing()
 # tests target
