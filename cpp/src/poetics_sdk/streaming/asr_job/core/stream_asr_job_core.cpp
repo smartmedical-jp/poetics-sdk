@@ -353,7 +353,7 @@ namespace poetics::streaming::asr_job::core {
 
             auto previousAudioFragmentCount = audioFragmentCount - 1;
             if (previousAudioFragmentCount != 0 && (previousAudioFragmentCount % DISCARD_FRAGMENT_INTERVAL == 0)) {
-                cout << "Discarding audio fragment until " << previousAudioFragmentCount << endl;
+                // cout << "Discarding audio fragment until " << previousAudioFragmentCount << endl;
                 audioBuffer->ReleaseFragmentUntil(previousAudioFragmentCount, DISCARD_FRAGMENT_INTERVAL);
             }
         }

@@ -9,9 +9,6 @@ using std::shared_ptr;
 using std::unique_ptr;
 #include <vector>
 using std::vector;
-#include <iostream>
-using std::cout;
-using std::endl;
 
 #include "stream_asr_job_listener.h"
 
