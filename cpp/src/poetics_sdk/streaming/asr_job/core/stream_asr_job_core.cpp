@@ -2,9 +2,9 @@
 
 namespace poetics::streaming::asr_job::core {
     StreamAsrJobCore::StreamAsrJobCore(
-        string endpoint, string apiKey,
-        string audioEncoding, int audioSampleRate, int channelCount, 
-        bool enableDatalogging, string conversationTitle, vector<string>& channels)
+        const char * endpoint, const char * apiKey,
+        const char * audioEncoding, int audioSampleRate, int channelCount, 
+        bool enableDatalogging, const char * conversationTitle, vector<const char *>& channels)
     {
         _endpoint = endpoint;
         _apiKey = apiKey;
@@ -14,7 +14,10 @@ namespace poetics::streaming::asr_job::core {
         _channelCount = channelCount;
         _enableDatalogging = enableDatalogging;
         _conversationTitle = conversationTitle;
-        _channels = std::make_unique<vector<string>>(channels);
+        _channels = std::make_unique<vector<string>>();
+        for (int i = 0; i < channelCount; i++) {
+            _channels->push_back(channels[i]);
+        }
 
         _audioBuffers = std::make_shared<vector<shared_ptr<AudioBuffer>>>();
         for (int i = 0; i < _channelCount; i++) {
@@ -34,8 +37,8 @@ namespace poetics::streaming::asr_job::core {
         }
     }
 
-    StreamAsrJobCore::StreamAsrJobCore(string endpoint, string apiKey,
-        string streamAsrJobID, int channelCount)
+    StreamAsrJobCore::StreamAsrJobCore(const char * endpoint, const char * apiKey,
+        const char * streamAsrJobID, int channelCount)
     {
         _endpoint = endpoint;
         _apiKey = apiKey;

@@ -72,11 +72,11 @@ namespace poetics::streaming::asr_job::core {
     class StreamAsrJobCore : public StreamAsrJob, private Poco::Runnable
     {
     public:
-        StreamAsrJobCore(string endpoint, string apiKey,
-            string audioEncoding, int audioSampleRate, int channelCount, 
-            bool enableDatalogging, string conversationTitle, vector<string>& channels);
-        StreamAsrJobCore(string endpoint, string apiKey,
-            string streamAsrJobID, int channelCount);
+        StreamAsrJobCore(const char * endpoint, const char * apiKey,
+            const char * audioEncoding, int audioSampleRate, int channelCount, 
+            bool enableDatalogging, const char * conversationTitle, vector<const char *>& channels);
+        StreamAsrJobCore(const char * endpoint, const char * apiKey,
+            const char * streamAsrJobID, int channelCount);
         ~StreamAsrJobCore();
     protected:
         virtual bool _connect() override;

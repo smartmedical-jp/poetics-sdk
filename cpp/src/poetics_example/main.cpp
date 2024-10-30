@@ -4,17 +4,17 @@
 class StreamListener : public poetics::streaming::asr_job::StreamAsrJobListener
 {
 public:
-    void OnMessageReceived(const string result) override
+    void OnMessageReceived(const string& result) override
     {
         cout << "\033[1mOnMessage: " << result << "\033[0m" << endl;
     }
 
-    void OnErrorReceived(const string error) override
+    void OnErrorReceived(const string& error) override
     {
         cout << "\033[1;31mOnError: " << error << "\033[0m" << endl;
     }
 
-    void OnDebugMessageReceived(const string message) override
+    void OnDebugMessageReceived(const string& message) override
     {
         cout << "\033[1;33mOnDebug: " << message.substr(0, 250) << "\033[0m" << endl;
     }
@@ -41,7 +41,7 @@ int main()
     }
 
     poetics::streaming::StreamingClient streamingClient(endpoint, apiKey);
-    vector<string> channels = { "channel1" };
+    vector<const char *> channels = { "channel1" };
     unique_ptr<StreamAsrJob> asrJob = streamingClient.createStreamAsrJob("s16le", 8000, 1, true, "test", channels);
     asrJob->setListener(std::make_shared<StreamListener>());
     if (asrJob->connect())

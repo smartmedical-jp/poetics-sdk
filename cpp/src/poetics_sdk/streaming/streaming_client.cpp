@@ -3,27 +3,27 @@
 using namespace poetics::streaming::asr_job::core;
 
 namespace poetics::streaming {
-    StreamingClient::StreamingClient(string endpoint, string apiKey)
+    StreamingClient::StreamingClient(const char * endpoint, const char * apiKey)
     {
-        _endpoint = endpoint;
-        _apiKey = apiKey;
+        _endpoint = std::make_unique<string>(endpoint);
+        _apiKey = std::make_unique<string>(apiKey);
     }
 
     std::unique_ptr<StreamAsrJob> StreamingClient::createStreamAsrJob(
-        string audioEncoding, int audioSampleRate, int channelCount, 
-        bool enableDatalogging, string conversationTitle, vector<string>& channels)
+        const char * audioEncoding, int audioSampleRate, int channelCount, 
+        bool enableDatalogging, const char * conversationTitle, vector<const char *>& channels)
     {
         auto asrJob = std::make_unique<StreamAsrJobCore>(
-            _endpoint, _apiKey, audioEncoding, audioSampleRate, 
+            _endpoint->c_str(), _apiKey->c_str(), audioEncoding, audioSampleRate, 
             channelCount, enableDatalogging, conversationTitle, channels);
         return asrJob;
     }
 
     // Not implemented yet
-    std::unique_ptr<StreamAsrJob> poetics::streaming::StreamingClient::connectToStreamAsrJob(string streamAsrJobID, int channelCount)
+    std::unique_ptr<StreamAsrJob> poetics::streaming::StreamingClient::connectToStreamAsrJob(const char * streamAsrJobID, int channelCount)
     {
         auto asrJob = std::make_unique<StreamAsrJobCore>(
-            _endpoint, _apiKey, streamAsrJobID, channelCount);
+            _endpoint->c_str(), _apiKey->c_str(), streamAsrJobID, channelCount);
         return asrJob;
     }
 }
