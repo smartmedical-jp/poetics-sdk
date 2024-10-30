@@ -104,16 +104,18 @@ int main()
                 index++;
             }
 
+            cout << "Closing StreamAsrJob" << endl;
+            asrJob->finishEnqueuingAudioData();
+
+            // Wait for 10 seconds before disconnecting
+            std::this_thread::sleep_for(std::chrono::seconds(10));
         }
         else {
             cout << "Failed to open audio file" << endl;
         }
         delete[] buffer;
         buffer = nullptr;
-        cout << "Closing StreamAsrJob" << endl;
-        asrJob->finishEnqueuingAudioData();
-        // Wait for 10 seconds before disconnecting
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+        
         cout << "Disconnecting" << endl;
         asrJob->disconnect();
     }
