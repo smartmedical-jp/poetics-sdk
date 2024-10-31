@@ -12,12 +12,12 @@ The classes and functions defined here are external APIs that can be accessed by
 
 # StreamingClient
 
-- **StreamingClient**(string endpoint, string apiKey)
+- **StreamingClient**(const char* endpoint, const char* apiKey)
 - std::unique_ptr `<StreamAsrJob>` **createStreamAsrJob**(
-  string audioEncoding, int audioSampleRate, int channelCount,
-  bool enableDatalogging, string conversationTitle, vector `<string>`& channels)
+  const char* audioEncoding, int audioSampleRate, int channelCount,
+  bool enableDatalogging, const char* conversationTitle, vector `<const char*>`& channels)
 - std::unique_ptr `<StreamAsrJob>` **connectToStreamAsrJob**(
-  string streamAsrJobID, int channelCount)
+  const char* streamAsrJobID, int channelCount)
   - Use this if you already have a streamAsrJobID and want to connect to it.
   - Not implemented at this time, only the method is defined.
 
