@@ -53,6 +53,6 @@ The classes and functions defined here are external APIs that can be accessed by
   - Receive errors from the server (in JSON format)
 - **OnDebugMessageReceived**(string& message)
   - A listener used internally when developing SDKs and not normally needed to be received on the client side.
-  - Like the [example code](../../src/poetics_example/main.cpp), leave function empty as empty body.
+  - Like the [example code](../../src/poetics_example/main.cpp), leave function body as empty.
 
 <br/>
