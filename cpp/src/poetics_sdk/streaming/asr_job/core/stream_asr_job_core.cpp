@@ -297,12 +297,24 @@ namespace poetics::streaming::asr_job::core {
 
     void StreamAsrJobCore::_sendRequest(std::stop_token stopToken)
     {
-        // std::lock_guard<std::mutex> lock(_requestMutex);
+        /*
+        Since std::this_thread::yield() costs a lot which uses system call,
+        we're going to retry 16 times with 25 ms intervals before calling yield().
+        (When I checked before, yield() is called 3000~8000 times to wait the queue to be filled.)
+        */
+        std::atomic<int> retryCount;
         // Sending data to the server
         while (!_exit.load(std::memory_order_acquire) && !stopToken.stop_requested()) {
-            if (!_audioDataQueue->empty()) {
-                // onDebugMessageReceived(fmt::format("AudioDataQueue is not empty. Sending audio fragment..."));
-                _sendAudioFragment();
+            retryCount.store(0, std::memory_order_release);
+            while (retryCount.load(std::memory_order_acquire) < 16) {
+                if (_audioDataQueue->empty()) {
+                    retryCount.store(retryCount.load(std::memory_order_acquire) + 1, std::memory_order_release);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(25));
+                }
+                else {
+                    _sendAudioFragment();
+                    break;
+                }
             }
             std::this_thread::yield();
         }
