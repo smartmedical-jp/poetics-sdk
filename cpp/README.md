@@ -1,5 +1,7 @@
 # Poetics SDK (C++)
 
+[日本語はこちら](./README.ja.md)
+
 - [Poetics SDK (C++)](#poetics-sdk-c)
 - [1. Description](#1-description)
 - [2. Key features](#2-key-features)
