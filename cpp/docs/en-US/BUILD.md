@@ -65,7 +65,7 @@ Go to extensions tab and install following extensions:
 
 After you install the above extensions and select in the status bar the CMake configuration (e.g. `Ninja Multi-Config`), as show in the following image:
 
-![CMake's preset selection in the status bar of Visual Studio Code](../img/vscode_cmakepresets_selection.png)
+![CMake's preset selection in the status bar of Visual Studio Code](../../img/vscode_cmakepresets_selection.png)
 
 # 3. Build, Debug, and Test
 
@@ -76,11 +76,11 @@ Currently there are two build configures:
 
 The former config will build the libraries dependent to this SDK separately like below:
 
-![Build result of Ninja Multi-Config](../img/ninja-multi-config.png)
+![Build result of Ninja Multi-Config](../../img/ninja-multi-config.png)
 
 The latter config will merge the libraries dependent to this SDK (statically) like below:
 
-![Build result of Ninja Win64-Static](../img/ninja-win64-static.png)
+![Build result of Ninja Win64-Static](../../img/ninja-win64-static.png)
 
 ## 3.1 How to build
 
@@ -104,4 +104,4 @@ The major `C++` IDEs like Visual Studio should already support `CMakePresets.jso
 
 For example [Visual Studio Code](https://code.visualstudio.com/) with the [CMake Tools extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools) let you to open the root folder (`cpp`) of this repository, and select the default build target (ex: `all, poetics-sdk, poetics-standalone, ...`) or target to launch (ex: `poetics_standalone, poetics_test`), as shown in the following image:
 
-![CMake's preset selection in the status bar of Visual Studio Code](../img/vscode_cmakepresets_selection.png)
+![CMake's preset selection in the status bar of Visual Studio Code](../../img/vscode_cmakepresets_selection.png)
