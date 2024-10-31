@@ -3,7 +3,7 @@
 - [StreamAsrJob](#streamasrjob)
   - [Checking properties](#checking-properties)
   - [Setting up a listener](#setting-up-a-listener)
-  - [Communcation with the server](#communcation-with-the-server)
+  - [Communicating with the server](#communicating-with-the-server)
 - [StreamAsrJobListener](#streamasrjoblistener)
 
 # API Documentation
@@ -37,7 +37,7 @@ The classes and functions defined here are external APIs that can be accessed by
 
 - void **setListener**(shared_ptr `<StreamAsrJobListener>` listener)
 
-## Communcation with the server
+## Communicating with the server
 
 - bool **connect**()
 - bool **disconnect**()
