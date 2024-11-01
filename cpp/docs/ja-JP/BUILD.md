@@ -11,7 +11,6 @@
   - [3.2 デバッグ方法](#32-デバッグ方法)
 - [4. Integrated Development Environment (IDE)のサポート](#4-integrated-development-environment-ideのサポート)
 
-
 ## 1. ビルド環境の準備
 
 ### 1.1 Build Tools for Visual Studio 2022
@@ -39,9 +38,9 @@
   - `launch_devtools_x86.bat`を実行する
 - [**重要**] x64バイナリをビルドする場合,
   - `launch_devtools_x64.bat`を実行する
-- ターミナルから`code .`を入力
+- ターミナルから `code .`を入力
 
-これでプロジェクトをビルドすることができます！ プロジェクトは常にこのように開くべきであることを覚えておいてください。
+これでプロジェクトをビルドすることができます！ プロジェクトは常にこの手順で開く必要がありますのでご注意ください。
 
 (このリポジトリをクローンして、普通のVSCodeで開くと、次のようなエラーが表示されます:
 
@@ -51,7 +50,7 @@
 [cmake] CMake Error: CMAKE_CXX_COMPILER not set, after EnableLanguage
 ```
 
-この場合、**`builds`ディレクトリを削除**し、前述の`launch_devtools_x**.bat`を起動してVSCodeを再実行する必要があります。
+この場合、**`builds`ディレクトリを削除**し、前述の `launch_devtools_x**.bat`を起動してVSCodeを再実行する必要があります。
 
 ## 2. VSCode拡張機能の設定
 
@@ -97,5 +96,4 @@
 
 VSCode以外にも、Visual Studioのような主要なC++ IDEはすでにCMakeをサポートしています。
 
-Visual Studioで`cpp`フォルダを開くことで開発を進めることができます。
-
+Visual Studioで `cpp`フォルダを開くことで開発を進めることができます。
