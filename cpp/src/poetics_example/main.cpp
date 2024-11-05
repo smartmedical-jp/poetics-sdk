@@ -30,7 +30,7 @@ namespace poetics {
 
 int main()
 {
-    system("chcp 65001");
+    system("chcp 65001"); // Setting terminal environment to UTF-8 to properly print the server message
 
     // POETICS_SETENV("POETICS_API_KEY", "YOUR_API_KEY");
     // POETICS_SETENV("POETICS_STREAMING_API_ENDPOINT", "stream.api.poetics-ai.com");
