@@ -1,0 +1,364 @@
+@startuml PoeticsSdk
+set namespaceSeparator ::
+skinparam groupInheritance 3
+
+class streaming::StreamingClient {
+    +std::string url
+
+    +StreamingClient(StreamingClientOptions options)
+
+    -StreamAsrJob createStreamAsrJob(CreateStreamAsrJobOptions options)
+    -StreamAsrJob connectToStreamAsrJob(ConnectToStreamAsrJobOptions options)
+}
+
+class streaming::asr_job::StreamAsrJob {
+    +*WebSocketConnection conn
+    +*StreamAsrJobCore core
+    +chan Utterance utteranceChan
+    +Error error
+
+    +StreamAsrJob(std::string url, int channelCount, std::function<StreamAsrJobCore>)
+    
+    +*StreamAsrJob CreateStreamAsrJob(std::string url, CreateStreamAsrJobOptions options)
+    +*StreamAsrJob ConnectToStreamAsrJob(std::string url, ConnectToStreamAsrJobOptions options)
+
+    -Error processMessage(std::string msgStr)
+    -void run()
+    -void subscribeUtterance()
+    -Error enqueueAudioData(int channelIndex, byte[] audioData)
+    -void finishEnqueuingAudioData()
+    -(StreamAsrJobDetail, Error) jobDetail()
+    -Error Err()
+}
+
+interface streaming::websocket_connection::IWebsocketConnection<typename T> {
+    void SetOnReconnect(std::function onReconnect)
+
+    void Send(T message)
+    void Close()
+
+    void SubscribeMessage() std::string
+    void SubscribeError() Error
+    void SubscribeDone()
+}
+
+class streaming::websocket_connection::WebSocketConnection<typename T> {
+    -string url
+    -Conn* conn
+    -chan string receiveChan
+    -chan Error errorChan
+    -chan doneChan
+    -std::vector<std::string> messageBuffer
+    -Mutex mutex
+    -int remainingReconnectAttempts
+    -std::function onReconnect
+    -bool isClosed
+    -Error lastReconnectError
+
+    +void SetOnReconnect(std::function onReconnect)
+    +void Send(T message)
+    +void Close()
+    +std::string SubscribeMessage()
+    +Error SubscribeError()
+    +void SubscribeDone()
+    +void Debug_Disconnect()
+
+    -Error connect()
+    -void pingLoop()
+    -void receiveLoop()
+    -void sendLoop()
+    -void reconnect()
+}
+
+interface streaming::asr_job::core::IConnection<typename T> {
+	SetOnReconnect(std::function onReconnect)
+	Send(T message)
+}
+
+class streaming::asr_job::core::StreamAsrJobCore {
+    -int channelCount
+    -AudioBuffer[] audioBuffers
+    -bool isNextFragmentIndicesInitialized
+    -int[] nextFragmentIndices
+    -bool isJobDetailInitialized
+    -StreamAsrJobDetail jobDetail
+    -bool isNextFragmentSendable
+    -bool isEnqueuingAudioDataFinished
+    -bool isCloseJobMessageSent
+    -int errorMessageCount
+    -int nextSendingFragmentIndex
+
+	-std::function<Utterance> onUtteranceFunc
+
+    +StreamAsrJobCore(IConnection conn, int channelCount)
+    +CreateStreamAsrJobMessage buildCreateStreamAsrJobMessage(CreateStreamAsrJobOptions options)
+
+    -createStreamAsrJob(CreateStreamAsrJobOptions options)
+    -connectToStreamAsrJob(ConnectToStreamAsrJobOptions options)
+    -onReconnect()
+    -onErrorMessage(ErrorMessage msg)
+    -onJobDetailMessage(JobDetailMessage msg)
+    -onJobStatusUpdatedMessage(JobStatusUpdatedMessage msg)
+    -onAudioFragmentSubmissionProgressMessage(AudioFragmentSubmissionProgressMessage msg)
+    -onTemporaryUtteranceMessage(TemporaryUtteranceMessage msg)
+    -onUtteranceMessage(UtteranceMessage msg)
+    -onReceiveMessageTimeout()
+    -enqueueAudioData(int channelIndex, byte[] data)
+    -finishEnqueuingAudioData()
+    -(bool, Error) isAllAudioDataSent()
+    -(bool continueLoop, Error err) step()
+    -setOnUtteranceFunc(std::function<Utterance> func)
+    -(StreamAsrJobDetail, error) jobDetail()
+}
+
+class streaming::asr_job::core::StreamAsrJobDetail {
+    +string StreamAsrJobID
+    +string* ConversationID
+    +bool IsDataLoggingEnabled
+    +string AudioEncoding
+    +int AudioSampleRate
+    +string Status
+    +int ChannelCount
+    +Time CreatedAt
+}
+
+class streaming::asr_job::core::Utterance {
+    +string UtteranceID
+    +bool IsTemporary
+    +int ChannelIndex
+    +time StartAt
+    +time EndAt
+    +string Text
+
+    +Utterance(std::string utteranceId,\n\
+        bool isTemporary,\n\
+        int channelIndex,\n\
+        Time startsAt,\n\
+        Time endsAt,\n\
+        std::string text)
+}
+
+class streaming::asr_job::core::CreateStreamAsrJobOptions {
+    +bool EnableDataLogging
+    +std::string AudioEncoding
+    +int AudioSampleRate
+    +int ChannelCount
+    +std::string ConversationTitle
+    +std::vector<CreateStreamAsrJobOptionsChannel>* Channels
+}
+
+class streaming::asr_job::core::CreateStreamAsrJobOptionsChannel {
+    +std::string ParticipantName
+}
+
+class streaming::asr_job::core::ConnectToStreamAsrJobOptions {
+    +std::string StreamAsrJobID
+    +int ChannelCount
+}
+
+class streaming::audio_buffer::AudioBuffer {
+    -byte[] bytes
+    -int fromFragmentIndex
+    -int bytesPerFragment
+    -int discardableFragmentIndex
+    -Mutex mutex
+
+    +AppendAudioData(byte[] data)
+    +GetFragmentAt(int fragmentIndex, bool isRecordingFinished)
+    +ReleaseAudioDataBefore(int fragmentIndex)
+}
+
+interface streaming::audio_buffer::IAudioBuffer {
+    AppendAudioData(byte[] data)
+    (byte[], error) GetFragmentAt(int fragmentIndex, bool isRecordingFinished)
+    ReleaseAudioDataBefore(int fragmentIndex)
+}
+
+class streaming::asr_job::incoming_message::AudioFragmentSubmissionProgressMessage {
+    +std::string Message
+    +AudioFragmentSubmissionProgressMessageBody Body
+}
+
+class streaming::asr_job::incoming_message::AudioFragmentSubmissionProgressMessageBody {
+    +std::vector<AudioFragmentSubmissionProgressMessageBodyChannel> Channels
+}
+
+class streaming::asr_job::incoming_message::AudioFragmentSubmissionProgressMessageBodyChannel {
+    +int ChannelIndex
+    +int AudioFragmentCount
+}
+
+class streaming::asr_job::incoming_message::ErrorMessage {
+    +std::string Message
+    +ErrorMessageBody Body
+}
+
+class streaming::asr_job::incoming_message::ErrorMessageBody {
+    +std::string Code
+    +std::string Message
+}
+
+class streaming::asr_job::incoming_message::JobDetailMessage {
+    +std::string Message
+    +JobDetailMessageBody Body
+}
+
+class streaming::asr_job::incoming_message::JobDetailMessageBody {
+    +string StreamAsrJobID
+    +*string ConversationID
+    +bool IsDataLoggingEnabled
+    +string AudioEncoding
+    +int AudioSampleRate
+    +string Status
+    +int ChannelCount
+    +Time CreatedAt
+}
+
+class streaming::asr_job::incoming_message::JobStatusUpdatedMessage {
+    +std::string Message
+    +JobStatusUpdatedMessageBody Body
+}
+
+class streaming::asr_job::incoming_message::JobStatusUpdatedMessageBody {
+    +std::string Status
+}
+
+class streaming::asr_job::incoming_message::TemporaryUtteranceMessage {
+    +std::string Message
+    +TemporaryUtteranceMessageBody Body
+}
+
+class streaming::asr_job::incoming_message::TemporaryUtteranceMessageBody {
+    +int ChannelIndex
+    +std::string UtteranceID
+    +Time StartAt
+    +Time EndAt
+    +std::string Text
+}
+
+class streaming::asr_job::incoming_message::UtteranceMessage {
+    +std::string Message
+    +UtteranceMessageBody Body
+}
+
+class streaming::asr_job::incoming_message::UtteranceMessageBody {
+    +int ChannelIndex
+    +string UtteranceID
+    +time StartAt
+    +time EndAt
+    +string Text
+}
+
+class streaming::asr_job::outgoing_message::CloseStreamAsrJobMessage {
+    +std::string Command
+
+    +CloseStreamAsrJobMessage()
+}
+
+class streaming::asr_job::outgoing_message::ConnectToStreamAsrJobMessage {
+    +std::string Command
+    +ConnectToStreamAsrJobMessageBody Body
+
+    +ConnectToStreamAsrJobMessage(std::string StreamAsrJobID)
+}
+
+class streaming::asr_job::outgoing_message::ConnectToStreamAsrJobMessageBody {
+    +std::string StreamAsrJobID
+}
+
+class streaming::asr_job::outgoing_message::CreateStreamAsrJobMessage {
+    +std::string Command
+    +CreateStreamAsrJobMessageBody Body
+
+    +CreateStreamAsrJobMessage(enableDataLogging bool,\n\
+    string conversationTitle,\n\
+    string audioEncoding,\n\
+    int audioSampleRate,\n\
+    int channelCount,\n\
+    std::vector<CreateStreamAsrJobMessageBodyChannel>* channels)
+}
+
+class streaming::asr_job::outgoing_message::CreateStreamAsrJobMessageBody {
+    +bool EnableDataLogging
+    +string ConversationTitle
+    +string AudioEncoding
+    +int AudioSampleRate
+    +int ChannelCount
+    +std::vector<CreateStreamAsrJobMessageBodyChannel>* Channels
+}
+
+class streaming::asr_job::outgoing_message::CreateStreamAsrJobMessageBodyChannel {
+    +std::string ParticipantName
+}
+
+class streaming::asr_job::outgoing_message::SubmitAudioFragmentMessage {
+    +std::string Command
+    +SubmitAudioFragmentMessageBody Body
+}
+
+class streaming::asr_job::outgoing_message::SubmitAudioFragmentMessageBody {
+    +int ChannelIndex
+    +int AudioFragmentIndex
+    +std::string Base64AudioData
+
+    +SubmitAudioFragmentMessage(int channelIndex,\n\
+        int audioFragmentIndex,\n\
+        byte[] audiodata)
+}
+
+StreamingClient ..> StreamAsrJob
+
+StreamAsrJob *-- StreamAsrJobCore
+StreamAsrJob *-- WebSocketConnection
+StreamAsrJob *-- Utterance
+StreamAsrJob ..> StreamAsrJobDetail
+StreamAsrJobCore <|.. IConnection
+StreamAsrJobCore <--* AudioBuffer
+StreamAsrJobCore <--* StreamAsrJobDetail
+StreamAsrJobCore ..> Utterance
+
+AudioBuffer <|.. IAudioBuffer
+
+WebSocketConnection <|.. IWebsocketConnection
+
+CreateStreamAsrJobOptions "1" --> "many" CreateStreamAsrJobOptionsChannel : contains
+
+StreamAsrJobCore ..> AudioFragmentSubmissionProgressMessage
+AudioFragmentSubmissionProgressMessage --> AudioFragmentSubmissionProgressMessageBody
+AudioFragmentSubmissionProgressMessageBody "1" --> "many" AudioFragmentSubmissionProgressMessageBodyChannel : contains
+StreamAsrJobCore ..> ErrorMessage
+ErrorMessage --> ErrorMessageBody
+StreamAsrJobCore ..> JobDetailMessage
+JobDetailMessage --> JobDetailMessageBody
+StreamAsrJobCore ..> JobStatusUpdatedMessage
+JobStatusUpdatedMessage --> JobStatusUpdatedMessageBody
+StreamAsrJobCore ..> TemporaryUtteranceMessage
+TemporaryUtteranceMessage --> TemporaryUtteranceMessageBody
+StreamAsrJobCore ..> UtteranceMessage
+UtteranceMessage --> UtteranceMessageBody
+StreamAsrJobCore ..> ConnectToStreamAsrJobOptions
+
+StreamAsrJobCore ..> CreateStreamAsrJobMessage
+ConnectToStreamAsrJobMessage --> ConnectToStreamAsrJobMessageBody
+CreateStreamAsrJobMessage --> CreateStreamAsrJobMessageBody
+CreateStreamAsrJobMessageBody "1" --> "many" CreateStreamAsrJobMessageBodyChannel : contains
+SubmitAudioFragmentMessage --> SubmitAudioFragmentMessageBody
+
+class streaming::asr_job::ClassA <legend of UML diagram> {
+    +int publicProperty
+    -bool privateProperty
+    +int publicMethod()
+    -bool privateMethod()
+}
+class streaming::asr_job::ClassB
+class streaming::asr_job::ClassC
+class streaming::asr_job::ClassD
+class streaming::asr_job::ClassE
+interface streaming::asr_job::InterfaceA
+
+ClassA <|.. InterfaceA : Implementation
+ClassA *-- ClassB : Composition
+ClassA <--* ClassC : Complex Composition
+ClassA ..> ClassD : Dependency
+ClassA --> ClassE : Direct Association
+@enduml
