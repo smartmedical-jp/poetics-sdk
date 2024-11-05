@@ -17,9 +17,11 @@ namespace poetics {
                     cout << "\033[1;31mOnError: " << error << "\033[0m" << endl;
                 }
 
+                // For internal development purpose.
+                // You don't need to use this message in common case.
                 void OnDebugMessageReceived(const string& message) override
                 {
-                    cout << "\033[1;33mOnDebug: " << message.substr(0, 250) << "\033[0m" << endl;
+                    // cout << "\033[1;33mOnDebug: " << message.substr(0, 250) << "\033[0m" << endl;
                 }
             };
         }
@@ -56,6 +58,7 @@ int main()
     {
         cout << "Connected" << endl;
 
+        // You should modify following filepath for your environment.
         string filePath = "C:\\REPO\\poetics-sdk\\testdata\\short_s16le_8k.wav";
         // string filePath = "C:\\REPO\\poetics-sdk\\testdata\\long_s16le_8k.wav";
         int sampleRate = 8000;
