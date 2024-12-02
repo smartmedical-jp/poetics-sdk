@@ -253,7 +253,7 @@ namespace poetics::streaming::asr_job::core {
                         auto json = json::parse(response);
                         auto _ = _processIncomingMessage(json);
                         if (json["message"] == "job_status_updated") {
-                            auto& body = json["Body"];
+                            auto& body = json["body"];
                             if (body["status"] == "completed") {
                                 onDebugMessageReceived(fmt::format("Job completed: {}", getStreamAsrJobID()));
                                 _exit.store(true, std::memory_order_release);

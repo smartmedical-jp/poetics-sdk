@@ -23,6 +23,6 @@ namespace poetics::streaming::asr_job::incoming_message {
 
     void from_json(const json& j, TemporaryUtteranceMessage& message) {
         message.message = j["message"];
-        from_json(j["Body"], message.body);
+        from_json(j["body"], message.body);
     }
 }

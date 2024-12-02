@@ -9,7 +9,7 @@ namespace poetics::streaming::asr_job::incoming_message {
 
     void from_json(const json& j, ErrorMessage& e) {
         j.at("message").get_to(e.message);
-        j.at("Body").get_to(e.body);
+        j.at("body").get_to(e.body);
     }
 
     void from_json(const json& j, ErrorMessageBody& b) {

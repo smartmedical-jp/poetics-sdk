@@ -24,7 +24,7 @@ namespace poetics::streaming::asr_job::incoming_message {
 
     void from_json(const json& j, AudioFragmentSubmissionProgressMessage& message) {
         message.message = j["message"].get<string>();
-        from_json(j["Body"], message.body);
+        from_json(j["body"], message.body);
     }
 
     void from_json(const json& j, AudioFragmentSubmissionProgressMessageBodyChannel& channel) {

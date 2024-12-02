@@ -34,7 +34,7 @@ namespace poetics::streaming::asr_job::incoming_message {
     void from_json(const json& j, JobDetailMessage& message) {
         message.message = j["message"].get<string>();
         JobDetailMessageBody body;
-        from_json(j["Body"], body);
+        from_json(j["body"], body);
         message.body = body;
     }
 }

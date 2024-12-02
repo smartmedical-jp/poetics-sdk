@@ -12,6 +12,6 @@ namespace poetics::streaming::asr_job::incoming_message {
 
     void from_json(const json& j, JobStatusUpdatedMessage& message) {
         j.at("message").get_to(message.message);
-        j.at("Body").get_to(message.body);
+        j.at("body").get_to(message.body);
     }
 }
